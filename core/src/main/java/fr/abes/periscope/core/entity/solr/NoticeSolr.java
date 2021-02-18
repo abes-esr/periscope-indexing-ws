@@ -4,6 +4,7 @@ import fr.abes.periscope.core.repository.solr.NoticeField;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
@@ -11,6 +12,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Représente une notice au format d'indexation SolR V1
@@ -21,55 +23,82 @@ import java.util.List;
 public class NoticeSolr implements Serializable {
 
     @Id
-    @Indexed(name = NoticeField.PPN_Z, type = "string")
+    @Field(NoticeField.ID)
+    @Indexed(name = NoticeField.ID, type = NoticeField.ID_TYPE)
+    protected String id;
+
+    @Field(NoticeField.TYPE)
+    @Indexed(name = NoticeField.TYPE, type = NoticeField.TYPE_TYPE)
+    private String type = "notice";
+
+    @Field(NoticeField.PPN)
+    @Indexed(name = NoticeField.PPN, type = NoticeField.PPN_TYPE)
     protected String ppn;
 
-    @Indexed(name = NoticeField.ISSN, type = "string")
+    @Field(NoticeField.ISSN)
+    @Indexed(name = NoticeField.ISSN, type = NoticeField.ISSN_TYPE)
     protected String issn;
 
-    @Indexed(name = NoticeField.PCP_T, type = "string")
-    protected HashSet<String> pcpList;
+    @Field(NoticeField.PCP_LIST)
+    @Indexed(name = NoticeField.PCP_LIST, type = NoticeField.PCP_LIST_TYPE)
+    @Deprecated
+    protected Set<String> pcpList;
 
-    @Indexed(name = NoticeField.RCR_T, type = "string")
-    protected HashSet<String> rcrList;
+    @Field(NoticeField.RCR_LIST)
+    @Indexed(name = NoticeField.RCR_LIST, type = NoticeField.RCR_LIST_TYPE)
+    @Deprecated
+    protected Set<String> rcrList;
 
-    @Indexed(name = NoticeField.EDITOR, type = "string")
+    @Field(NoticeField.EDITOR)
+    @Indexed(name = NoticeField.EDITOR, type = NoticeField.EDITOR_TYPE)
     protected String editor;
 
-    @Indexed(name = NoticeField.PROCESSING_GLOBAL_DATA_T, type = "string")
+    @Field(NoticeField.PROCESSING_GLOBAL_DATA)
+    @Indexed(name = NoticeField.PROCESSING_GLOBAL_DATA, type = NoticeField.PROCESSING_GLOBAL_DATA_TYPE)
     protected String processingGlobalData;
 
-    @Indexed(name = NoticeField.KEY_TITLE, type = "string")
+    @Field(NoticeField.KEY_TITLE)
+    @Indexed(name = NoticeField.KEY_TITLE, type = NoticeField.KEY_TITLE_TYPE)
     protected String keyTitle;
 
-    @Indexed(name = NoticeField.KEY_SHORTED_TITLE, type = "string")
+    @Field(NoticeField.KEY_SHORTED_TITLE)
+    @Indexed(name = NoticeField.KEY_SHORTED_TITLE, type = NoticeField.KEY_SHORTED_TITLE_TYPE)
     protected String keyShortedTitle;
 
-    @Indexed(name = NoticeField.PROPER_TITLE, type = "string")
+    @Field(NoticeField.PROPER_TITLE)
+    @Indexed(name = NoticeField.PROPER_TITLE, type = NoticeField.PROPER_TITLE_TYPE)
     protected String properTitle;
 
-    @Indexed(name = NoticeField.TITLE_FROM_DIFFERENT_AUTHOR, type = "string")
+    @Field(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR)
+    @Indexed(name = NoticeField.TITLE_FROM_DIFFERENT_AUTHOR, type = NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_TYPE)
     protected String titleFromDifferentAuthor;
 
-    @Indexed(name = NoticeField.PARALLEL_TITLE, type = "string")
+    @Field(NoticeField.PARALLEL_TITLE)
+    @Indexed(name = NoticeField.PARALLEL_TITLE, type = NoticeField.PARALLEL_TITLE_TYPE)
     protected String parallelTitle;
 
-    @Indexed(name = NoticeField.TITLE_COMPLEMENT, type = "string")
+    @Field(NoticeField.TITLE_COMPLEMENT)
+    @Indexed(name = NoticeField.TITLE_COMPLEMENT, type = NoticeField.TITLE_COMPLEMENT_TYPE)
     protected String titleComplement;
 
-    @Indexed(name = NoticeField.SECTION_TITLE, type = "string")
+    @Field(NoticeField.SECTION_TITLE)
+    @Indexed(name = NoticeField.SECTION_TITLE, type = NoticeField.SECTION_TITLE_TYPE)
     protected String sectionTitle;
 
-    @Indexed(name = NoticeField.KEY_TITLE_QUALIFIER, type = "string")
+    @Field(NoticeField.KEY_TITLE_QUALIFIER)
+    @Indexed(name = NoticeField.KEY_TITLE_QUALIFIER, type = NoticeField.KEY_TITLE_QUALIFIER_TYPE)
     protected String keyTitleQualifer;
 
-    @Indexed(name = NoticeField.CONTINIOUS_TYPE, type = "string")
+    @Field(NoticeField.CONTINIOUS_TYPE)
+    @Indexed(name = NoticeField.CONTINIOUS_TYPE, type = NoticeField.CONTINIOUS_TYPE_TYPE)
     protected String continiousType;
 
-    @Indexed(name = NoticeField.EXTERNAL_URLS_S, type = "string")
+    @Field(NoticeField.EXTERNAL_URLS)
+    @Indexed(name = NoticeField.EXTERNAL_URLS, type = NoticeField.EXTERNAL_URLS_TYPE)
     protected List<String> externalURLs;
 
-    @Indexed(name = NoticeField.NB_LOC, type = "integer")
+    @Field(NoticeField.NB_LOC)
+    @Indexed(name = NoticeField.NB_LOC, type = NoticeField.NB_LOC_TYPE)
     protected Integer nbLocation;
 
     @Override
@@ -96,6 +125,6 @@ public class NoticeSolr implements Serializable {
 
     @Override
     public String toString() {
-        return "NoticeSolr {"+ "ppn="+ ppn+", issn="+issn+"}";
+        return "NoticeSolr {"+ "id="+id+", ppn="+ ppn+", issn="+issn+"}";
     }
 }

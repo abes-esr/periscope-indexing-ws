@@ -4,146 +4,246 @@ package fr.abes.periscope.core.repository.solr;
  * Représente les champs SolR pour une Notice SolR
  * D'après l'xquery qui se trouve dans la table EQUERIES de la base XML
  * select xquery_clob from xqueries where cle3=4;
+ *
+ * Différence entre le TypeField String et Text de SolR
+ * The fields as default defined in the solr schema are vastly different.
+ * String stores a word/sentence as an exact string without performing tokenization etc.
+ * Commonly useful for storing exact matches, e.g, for facetting.
+ * Text typically performs tokenization, and secondary processing (such as lower-casing etc.).
+ * Useful for all scenarios when we want to match part of a sentence.
+ * If the following sample, "This is a sample sentence", is indexed to both fields we must search for exactly the text
+ * This is a sample sentence to get a hit from the string field, while it may suffice to search for sample
+ * (or even samples with stemmning enabled) to get a hit from the text field.
  */
 public interface NoticeField {
 
-    //--------------------------------
-    // @tag="001"
-    String PPN_Z = "001_z";
-    //--------------------------------
+    String ID = "id";
+    String ID_TYPE = "string";
 
-    //--------------------------------
-    // date
-    String DATE_AT = "dateetat_dt";
-    String DATE_INDEX = "dateindex_dt";
-    //--------------------------------
+    String TYPE = "type";
+    String TYPE_TYPE = "string";
+
+    String PPN = "001";
+    String PPN_TYPE = "string";
 
     //--------------------------------
     // leader
-    String L5 = "L5_s";
-    String L6 = "L6_s";
-    String L7 = "L7_s";
-    String L8 = "L8_s";
-    String L9 = "L9_s";
+    String L5 = "L5";
+    String L5_TYPE = "strings";
+
+    String L6 = "L6";
+    String L6_TYPE = "strings";
+
+    String L7 = "L7";
+    String L7_TYPE = "strings";
+
+    String L8 = "L8";
+    String L8_TYPE = "strings";
+
+    String L9 = "L9";
+    String L9_TYPE = "strings";
+    //--------------------------------
+
+
+    //--------------------------------
+    // Zone < 10
+    String ZONE_001 = "001";
+    String ZONE_001_TYPE = "string";
+
+    String ZONE_002 = "002_s";
+    String ZONE_002_TYPE = "string";
+
+    String ZONE_003 = "003_s";
+    String ZONE_003_TYPE = "string";
+
+    String ZONE_004 = "004";
+    String ZONE_004_TYPE = "string";
+
+    String ZONE_005 = "005";
+    String ZONE_005_TYPE = "string";
+
+    String ZONE_006 = "006";
+    String ZONE_006_TYPE = "string";
+
+    String ZONE_007 = "007";
+    String ZONE_007_TYPE = "string";
+
+    String ZONE_008 = "008";
+    String ZONE_008_TYPE = "string";
+
+    String ZONE_009 = "009";
+    String ZONE_009_TYPE = "string";
     //--------------------------------
 
     //--------------------------------
-    // @tag < 10
-    String ZONE_001_S = "001_s";
-    String ZONE_001_Z = "001_z";
-    String ZONE_001_T = "001_t";
+    // Zone 011
+    String ISSN = "011-a";
+    String ISSN_TYPE = "string";
 
-    String ZONE_002_S = "002_s";
-    String ZONE_002_Z = "002_z";
-    String ZONE_002_T = "002_t";
-
-    String ZONE_003_S = "003_s";
-    String ZONE_003_Z = "003_z";
-    String ZONE_003_T = "003_t";
-
-    String ZONE_004_S = "004_s";
-    String ZONE_004_Z = "004_z";
-    String ZONE_004_T = "004_t";
-
-    String ZONE_005_S = "005_s";
-    String ZONE_005_Z = "005_z";
-    String ZONE_005_T = "005_t";
-
-    String ZONE_006_S = "006_s";
-    String ZONE_006_Z = "006_z";
-    String ZONE_006_T = "006_t";
-
-    String ZONE_007_S = "007_s";
-    String ZONE_007_Z = "007_z";
-    String ZONE_007_T = "007_t";
-
-    String ZONE_008_S = "008_s";
-    String ZONE_008_Z = "008_z";
-    String ZONE_008_T = "008_t";
-
-    String ZONE_009_S = "009_s";
-    String ZONE_009_Z = "009_z";
-    String ZONE_009_T = "009_t";
+    String ZONE_011_F = "011-f";
+    String ZONE_011_F_TYPE = "string";
     //--------------------------------
 
     //--------------------------------
-    // @tag=930
-    String PCP_RCR_T = "pcprcr_t";
+    // Zone 033
+    String EXTERNAL_URLS = "033-a";
+    String EXTERNAL_URLS_TYPE = "string";
+
+    String ZONE_033_2 = "033-2";
+    String ZONE_033_2_TYPE = "string";
+
+    String ZONE_033_D = "033-d";
+    String ZONE_033_D_TYPE = "string";
     //--------------------------------
 
     //--------------------------------
-    // @tag > 9 and @tag < 900
-    String ISSN_S = "011-a_s";
-    String ISSN_T = "011-a_t";
-
-    String EXTERNAL_URLS_S = "033-a_s";
-    String EXTERNAL_URLS_T = "033-a_t";
-
-    String PROCESSING_GLOBAL_DATA_S = "100-a_s";
-    String PROCESSING_GLOBAL_DATA_T = "100-a_t";
-
-    String LANGUAGE_S = "101-a_s";
-    String LANGUAGE_T = "101-a_t";
-
-    String COUNTRY_S = "102-a_s";
-    String COUNTRY_T = "102-a_t";
-
-    String CONTINIOUS_TYPE_S = "110-a_s";
-    String CONTINIOUS_TYPE_T = "110-a_t";
-
-    String PROPER_TITLE_S = "200-a_s";
-    String PROPER_TITLE_T = "200-a_t";
-
-    String TITLE_FROM_DIFFERENT_AUTHOR_S = "200-c_s";
-    String TITLE_FROM_DIFFERENT_AUTHOR_T = "200-c_t";
-
-    String PARALLEL_TITLE_S = "200-d_s";
-    String PARALLEL_TITLE_T = "200-d_t";
-
-    String TITLE_COMPLEMENT_S = "200-e_s";
-    String TITLE_COMPLEMENT_T = "200-e_t";
-
-    String SECTION_TITLE_S = "200-i_s";
-    String SECTION_TITLE_T = "200-i_t";
-
-    String EDITOR_S = "210-c_s";
-    String EDITOR_T = "210-c_t";
-
-    String KEY_TITLE_S = "530-a_s";
-    String KEY_TITLE_T = "530-a_t";
-
-    String KEY_TITLE_QUALIFIER_S = "530-b_s";
-    String KEY_TITLE_QUALIFIER_T = "530-b_t";
-
-    String KEY_SHORTED_TITLE_S = "531-a_s";
-    String KEY_SHORTED_TITLE_T = "531-a_t";
+    // Zone 035
+    String ZONE_035_A = "035-a";
+    String ZONE_035_A_TYPE = "string";
     //--------------------------------
 
     //--------------------------------
-    // @tag >899
-    String PCP_S = "930-z_s";
-    String PCP_T = "930-z_t";
-
-    String RCR_S = "930-b_s";
-    String RCR_T = "930-b_t";
+    // Zone 100
+    String PROCESSING_GLOBAL_DATA = "100-a";
+    String PROCESSING_GLOBAL_DATA_TYPE = "string";
     //--------------------------------
 
     //--------------------------------
-    // @tag > 9  and @tag <900 not(@tag = preceding-sibling::datafield/@tag)])
-    String COUNTRY_Z = "102-a_z";
-    String ISSN = "011-a_z";
-    String CONTINIOUS_TYPE = "110-a_z";
-
-    String PROPER_TITLE = "200-a_z";
-    String TITLE_FROM_DIFFERENT_AUTHOR = "200-c_z";
-    String PARALLEL_TITLE = "200-d_z";
-    String TITLE_COMPLEMENT = "200-e_z";
-    String SECTION_TITLE = "200-i_z";
-    String EDITOR = "210-c_z";
-    String KEY_TITLE = "530-a_z";
-    String KEY_SHORTED_TITLE = "531-a_z";
-    String KEY_TITLE_QUALIFIER = "530-b_z";
+    // Zone 101
+    String LANGUAGE = "101-a";
+    String LANGUAGE_TYPE = "string";
     //--------------------------------
 
-    String NB_LOC = "NbLocs_i";
+    //--------------------------------
+    // Zone 102
+    String COUNTRY = "102-a";
+    String COUNTRY_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 105
+    String ZONE_105_A = "105-a";
+    String ZONE_105_A_TYPE = "string";
+
+    //--------------------------------
+    // Zone 106
+    String ZONE_106_A = "106-a";
+    String ZONE_106_A_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 110
+    String CONTINIOUS_TYPE = "110-a";
+    String CONTINIOUS_TYPE_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 181
+    String ZONE_181_6 = "181-6";
+    String ZONE_181_6_TYPE = "string";
+
+    String ZONE_181_C = "181-c";
+    String ZONE_181_C_TYPE = "string";
+
+    String ZONE_181_2 = "181-2";
+    String ZONE_181_2_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 182
+    String ZONE_182_6 = "182-6";
+    String ZONE_182_6_TYPE = "string";
+
+    String ZONE_182_C = "182-c";
+    String ZONE_182_C_TYPE = "string";
+
+    String ZONE_182_2 = "182-2";
+    String ZONE_182_2_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 200
+    String PROPER_TITLE = "200-a";
+    String PROPER_TITLE_TYPE = "text_fr";
+
+    String ZONE_200_B = "200-b";
+    String ZONE_200_B_TYPE = "string";
+
+    String TITLE_FROM_DIFFERENT_AUTHOR = "200-c";
+    String TITLE_FROM_DIFFERENT_AUTHOR_TYPE = "text_fr";
+
+    String PARALLEL_TITLE = "200-d";
+    String PARALLEL_TITLE_TYPE = "text_fr";
+
+    String TITLE_COMPLEMENT = "200-e";
+    String TITLE_COMPLEMENT_TYPE = "text_fr";
+
+    String ZONE_200_F = "200-f";
+    String ZONE_200_F_TYPE = "string";
+
+    String ZONE_200_G = "200-g";
+    String ZONE_200_G_TYPE = "string";
+
+    String SECTION_TITLE = "200-i";
+    String SECTION_TITLE_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 207
+    String ZONE_207_A = "207-a";
+    String ZONE_207_A_TYPE = "string";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 210
+    String ZONE_210_A = "210-a";
+    String ZONE_210_A_TYPE = "string";
+
+    String EDITOR = "210-c";
+    String EDITOR_TYPE = "text_fr";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 530
+    String KEY_TITLE = "530-a_s";
+    String KEY_TITLE_TYPE = "text_fr";
+
+    String KEY_TITLE_QUALIFIER = "530-b";
+    String KEY_TITLE_QUALIFIER_TYPE = "text_fr";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 531
+    String KEY_SHORTED_TITLE = "531-a";
+    String KEY_SHORTED_TITLE_TYPE = "text_fr";
+    //--------------------------------
+
+    //--------------------------------
+    // Zone 930
+    String PCP_LIST = "930-z";
+    String PCP_LIST_TYPE = "strings";
+
+    String RCR_LIST = "930-b";
+    String RCR_LIST_TYPE = "strings";
+    //--------------------------------
+
+    //--------------------------------
+    // Champs supplémentaire
+    @Deprecated
+    String DATE_AT = "dateetat_dt";
+    @Deprecated
+    String DATE_AT_TYPE = "pdate";
+    @Deprecated
+    String DATE_INDEX = "dateindex_dt";
+    @Deprecated
+    String DATE_INDEX_TYPE = "pdate";
+
+    String NB_LOC = "NbLocs";
+    String NB_LOC_TYPE = "integer";
+
+    String PCP_RCR = "pcprcr";
+    String PCP_RCR_TYPE = "text_fr";
+    //--------------------------------
+
+
 }

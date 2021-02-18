@@ -1,6 +1,6 @@
 package fr.abes.periscope.web.exception;
 
-import fr.abes.periscope.core.exception.IllegalCriterionException;
+import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.MappingException;
 import org.springframework.core.Ordered;
@@ -104,8 +104,8 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      * @param ex IllegalCriterionException
      * @return
      */
-    @ExceptionHandler(IllegalCriterionException.class)
-    protected ResponseEntity<Object> handleIllegalCriterionException(IllegalCriterionException ex) {
+    @ExceptionHandler(MissingFieldException.class)
+    protected ResponseEntity<Object> handleIllegalCriterionException(MissingFieldException ex) {
         String error = "Malformed JSON request";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));

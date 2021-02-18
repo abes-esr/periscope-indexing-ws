@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-solr</artifactId>
-			<version>4.3.2</version>
+			<version>4.3.5</version>
 		</dependency>
 
 		<!--- === Tests === -->

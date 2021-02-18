@@ -2,13 +2,11 @@ package fr.abes.periscope.core.repository.solr;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
-import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.util.NoticeMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
@@ -48,7 +44,9 @@ public class NoticeMapperTest {
         String expectedPpn = "13282261X";
         String expectedIssn = "21001456";
 
-        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+        NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
+
+        System.out.println(noticeSolr);
 
         Assert.assertEquals(expectedPpn, noticeSolr.getPpn());
         Assert.assertEquals(expectedIssn, noticeSolr.getIssn());

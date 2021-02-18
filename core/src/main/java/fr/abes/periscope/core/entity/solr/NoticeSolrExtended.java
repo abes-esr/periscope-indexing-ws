@@ -1,11 +1,15 @@
 package fr.abes.periscope.core.entity.solr;
 
+import fr.abes.periscope.core.repository.solr.NoticeField;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.solr.core.mapping.ChildDocument;
+import org.springframework.data.solr.core.mapping.Indexed;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Représente une notice au format d'indexation SolR V2
@@ -15,7 +19,11 @@ import java.util.List;
 public class NoticeSolrExtended extends NoticeSolr {
 
     @ChildDocument
-    private List<SpecimenSolr> specimens;
+    protected Set<SpecimenSolr> specimens = new HashSet<>();
+
+    public void addSpecimen(SpecimenSolr specimen) {
+        this.specimens.add(specimen);
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -41,6 +49,6 @@ public class NoticeSolrExtended extends NoticeSolr {
 
     @Override
     public String toString() {
-        return "NoticeSolr {"+ "ppn="+ ppn+", issn="+issn+"}";
+        return "NoticeSolrExtended {"+ "ppn="+ ppn+", issn="+issn+" , specimens="+specimens+"}";
     }
 }

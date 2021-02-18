@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.service;
 
 import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.core.repository.NoticeRepository;
 import fr.abes.periscope.core.util.NoticeMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,11 @@ public class NoticeStoreService {
         this.noticeMapper = mapper;
     }
 
-    public NoticeSolr save(NoticeSolr notice) {
+    public NoticeSolrExtended save(NoticeSolrExtended notice) {
         return noticeRepository.save(notice);
+    }
+
+    public void delete(NoticeSolrExtended notice) {
+        noticeRepository.delete(notice);
     }
 }

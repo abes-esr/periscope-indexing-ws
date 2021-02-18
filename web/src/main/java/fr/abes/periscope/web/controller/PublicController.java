@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.core.util.NoticeMapper;
@@ -31,7 +32,7 @@ public class PublicController {
     @PostMapping(value = "/notices")
     public String addNotice(@RequestBody @Valid NoticeXml notice) {
 
-        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+        NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
         noticeStoreService.save(noticeSolr);
         return "OK";
     }
