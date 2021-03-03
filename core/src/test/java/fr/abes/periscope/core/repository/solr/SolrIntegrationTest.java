@@ -33,8 +33,8 @@ public class SolrIntegrationTest {
     @DisplayName("ajout d'une notice avec exemplaire")
     public void addNoticeToSolr() throws IOException {
 
-        File file = new File("/work/developpement/projects/periscope/documents/base_xml/13282261X.xml");
-        //File file = new File("/work/developpement/projects/periscope/documents/base_xml/039224260.xml");
+        //File file = new File("/work/developpement/projects/periscope/documents/base_xml/13282261X.xml");
+        File file = new File("/work/developpement/projects/periscope/documents/base_xml/039224260.xml");
         //File file = new File("/work/developpement/projects/periscope/documents/base_xml/000000469.xml");
         String xml = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
 

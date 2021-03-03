@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @NoArgsConstructor
 @Getter @Setter
-@SolrDocument(collection = "periscope")
+@SolrDocument(collection = "periscope-v2")
 public class NoticeSolr implements Serializable {
 
     @Id
