@@ -10,4 +10,14 @@ class BatchApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void splitToChunk() {
+		int partitionSize = 1000;
+		Integer maxSize = 17429964;
+
+		for (Integer i = 0; i < maxSize; i += partitionSize) {
+			System.out.println(i + Math.min(i + partitionSize, maxSize));
+		}
+	}
+
 }

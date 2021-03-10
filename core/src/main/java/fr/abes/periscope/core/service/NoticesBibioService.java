@@ -13,12 +13,12 @@ public class NoticesBibioService {
     @Autowired
     private NoticesBibioRepository repository;
 
-    public List<NoticesBibio> findAll() {
-        return repository.findAll();
-    }
-
     public NoticesBibio findById(Integer id) {
         return repository.findById(id).orElse(null);
+    }
+
+    public Integer getMaxId() {
+        return repository.getMaxId();
     }
 
     public List<NoticesBibio> findByIdBetween(Integer min, Integer max) {
