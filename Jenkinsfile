@@ -302,6 +302,8 @@ node {
 
                             try {
 
+                                sh "ssh -tt ${username}@${hostname} \"whoiam\""
+
                                 echo 'get service status'
                                 sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
 
