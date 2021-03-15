@@ -289,7 +289,7 @@ node {
         stage('stop tomcat') {
             for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
                 try {
-                    //sshagent(credentials: ["${serverCredentials[i]}"]) {
+                    sshagent(credentials: ["${serverCredentials[i]}"]) {
                         withCredentials([
                                 usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
                                 string(credentialsId: "${serverHostnames[i]}", variable: 'hostname'),
@@ -323,7 +323,7 @@ node {
                                 sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
                             }
                         }
-                    //}
+                    }
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
                     notifySlack(slackChannel, e.getLocalizedMessage())
