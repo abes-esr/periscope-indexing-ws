@@ -289,7 +289,6 @@ node {
         stage('stop tomcat') {
             for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
                 try {
-                    sh "ssh -v -tt ${username}@${hostname} \"whoami\""
                     sshagent(credentials: ["${serverCredentials[i]}"]) {
                         withCredentials([
                                 usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
@@ -301,7 +300,9 @@ node {
                             echo "Stop service on ${serverHostnames[i]}"
                             echo "--------------------------"
 
-                            try { 
+                            try {
+                                sh "ssh -v -tt ${username}@${hostname} \"whoami\""
+                                
                                 echo 'get service status'
                                 sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
 
