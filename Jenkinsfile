@@ -301,7 +301,7 @@ node {
                             echo "--------------------------"
 
                             try {
-
+                                echo "${username}@${hostname}"
                                 sh "ssh -tt ${username}@${hostname} \"whoiam\""
 
                                 echo 'get service status'
