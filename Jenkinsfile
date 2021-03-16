@@ -10,11 +10,6 @@ node {
     def applicationFinalName = "periscope-indexing"
     def executeTests = false
 
-    // Definition des modules du projet
-    def projectModules = ["web","batch"]
-    def executeBuild = []
-    def executeDeploy = []
-
     // Definition du module web
     def backModuleDir = "web/"
     def backTargetHostnames = []
@@ -25,6 +20,11 @@ node {
     def batchModuleDir = "batch/"
     def batchTargetHostnames = []
     def batchTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
+
+    // Variables de configuration du build
+    def projectModules = []
+    def executeBuild = []
+    def executeDeploy = []
 
     // Variables globales
     def maventool
@@ -77,42 +77,43 @@ node {
 
             // Action a faire
             if (params.ACTION == null) {
-                executeBuild.add(false) // build module web
-                executeDeploy.add(false) // deploy module web
-
-                executeBuild.add(false) // build module batch
-                executeDeploy.add(false) // deploy module batch
+                throw new Exception("Variable ACTION is null")
 
             } else if (params.ACTION == 'Compiler') {
-                executeBuild.add(true) // build module web
-                executeDeploy.add(false) // deploy module web
+                projectModules.add("web")
+                executeBuild.add(true)
+                executeDeploy.add(false)
 
-                executeBuild.add(true) // build module batch
-                executeDeploy.add(false) // deploy module batch
+                projectModules.add("batch")
+                executeBuild.add(true)
+                executeDeploy.add(false)
 
             } else if (params.ACTION == 'Compiler & Deployer') {
-                executeBuild.add(true) // build module web
-                executeDeploy.add(true) // deploy module web
+                projectModules.add("web")
+                executeBuild.add(true)
+                executeDeploy.add(true)
 
-                executeBuild.add(true) // build module batch
-                executeDeploy.add(true) // deploy module batch
+                projectModules.add("batch")
+                executeBuild.add(true)
+                executeDeploy.add(true)
 
             } else if (params.ACTION == 'Compiler & Deployer : Web') {
-                executeBuild.add(true) // build module web
-                executeDeploy.add(true) // deploy module web
-
-                executeBuild.add(false) // build module batch
-                executeDeploy.add(false) // deploy module batch
+                projectModules.add("web")
+                executeBuild.add(true)
+                executeDeploy.add(true)
 
             } else if (params.ACTION == 'Compiler & Deployer : Batch') {
-                executeBuild.add(false) // build module web
-                executeDeploy.add(false) // deploy module web
-
-                executeBuild.add(true) // build module batch
-                executeDeploy.add(true) // deploy module batch
+                projectModules.add("batch")
+                executeBuild.add(true)
+                executeDeploy.add(true)
 
             } else {
                 throw new Exception("Unable to decode variable ACTION")
+            }
+
+            // On verifie que les tableaux ont bien ete remplis
+            if(projectModules.size() != executeBuild.size() || projectModules.size() != executeDeploy.size() || executeBuild.size() != executeDeploy.size()) {
+                throw new Exception("Arrays projectModules, executeBuild and executeDeploy have a different size")
             }
 
             // Branche a deployer
