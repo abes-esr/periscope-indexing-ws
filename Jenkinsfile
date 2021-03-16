@@ -16,10 +16,10 @@ node {
     def executeDeploy = []
 
     // Definition du module web
-    def webModuleDir = "web/"
-    def webTargetHostnames = []
-    def webTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
-    def webServiceName = "tomcat9-periscope-indexing.service"
+    def backModuleDir = "web/"
+    def backTargetHostnames = []
+    def backTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
+    def backServiceName = "tomcat9-periscope-indexing.service"
 
     // Definition du module batch
     def batchModuleDir = "batch/"
@@ -140,27 +140,24 @@ node {
 
             if (ENV == 'DEV') {
                 profil = "dev"
-                webTargetHostnames.add('hostname.server1-dev')
-                webTargetHostnames.add('hostname.server2-dev')
+                backTargetHostnames.add('hostname.server-back-1-dev')
+                backTargetHostnames.add('hostname.server-back-2-dev')
 
-                batchTargetHostnames.add('hostname.server1-dev')
-                batchTargetHostnames.add('hostname.server2-dev')
+                batchTargetHostnames.add('hostname.server-batch-1-dev')
 
             } else if (ENV == 'TEST') {
                 profil = "test"
-                webTargetHostnames.add('hostname.server1-test')
-                webTargetHostnames.add('hostname.server2-test')
+                backTargetHostnames.add('hostname.server-back-1-test')
+                backTargetHostnames.add('hostname.server-back-2-test')
 
-                batchTargetHostnames.add('hostname.server1-test')
-                batchTargetHostnames.add('hostname.server2-test')
+                batchTargetHostnames.add('hostname.server-batch-1-test')
 
             } else if (ENV == 'PROD') {
                 profil = "prod"
-                webTargetHostnames.add('hostname.server1-prod')
-                webTargetHostnames.add('hostname.server2-prod')
+                backTargetHostnames.add('hostname.server-back-1-prod')
+                backTargetHostnames.add('hostname.server-back-2-prod')
 
-                batchTargetHostnames.add('hostname.server1-prod')
-                batchTargetHostnames.add('hostname.server2-prod')
+                batchTargetHostnames.add('hostname.server-batch-1-prod')
             }
 
         } catch (e) {
@@ -220,7 +217,7 @@ node {
 
             stage("Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${webTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -233,7 +230,7 @@ node {
 
                 stage("artifact") {
                     try {
-                        archive "${webModuleDir}target/${applicationFinalName}.war"
+                        archive "${backModuleDir}target/${applicationFinalName}.war"
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -255,83 +252,83 @@ node {
 
                 stage("Deploy to web servers") {
 
-                    for (int i = 0; i < webTargetHostnames.size(); i++) { //Pour chaque serveur
+                    for (int i = 0; i < backTargetHostnames.size(); i++) { //Pour chaque serveur
                         try {
                             withCredentials([
                                     usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${webTargetHostnames[i]}", variable: 'hostname'),
+                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
                                     string(credentialsId: 'service.status', variable: 'status'),
                                     string(credentialsId: 'service.stop', variable: 'stop'),
                                     string(credentialsId: 'service.start', variable: 'start')
                             ]) {
-                                echo "Stop service on ${webTargetHostnames[i]}"
+                                echo "Stop service on ${backTargetHostnames[i]}"
                                 echo "--------------------------"
 
                                 try {
                                     echo 'get service status'
-                                    sh "ssh -tt ${username}@${hostname} \"${status} ${webServiceName}\""
+                                    sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
 
                                     echo 'stop the service'
-                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${webServiceName}\""
+                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${backServiceName}\""
 
                                 } catch (e) {
                                     // Maybe the tomcat is not running
                                     echo 'maybe the service is not running'
 
                                     echo 'we try to start the service'
-                                    sh "ssh -tt ${username}@${hostname} \"${start} ${webServiceName}\""
+                                    sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
 
                                     echo 'get service status'
-                                    sh "ssh -tt ${username}@${hostname} \"${status} ${webServiceName}\""
+                                    sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
 
                                     echo 'stop the service'
-                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${webServiceName}\""
+                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${backServiceName}\""
                                 }
 
                             }
                         } catch (e) {
                             currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to stop the web service on ${webTargetHostnames[i]} :" +e.getLocalizedMessage())
+                            notifySlack(slackChannel, "Failed to stop the web service on ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
                             throw e
                         }
 
                         try {
                             withCredentials([
                                     usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${webTargetHostnames[i]}", variable: 'hostname')
+                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname')
                             ]) {
-                                echo "Deploy to ${webTargetHostnames[i]}"
+                                echo "Deploy to ${backTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${applicationFinalName} ${webTargetDir}${applicationFinalName}.war\""
-                                sh "scp ${webModuleDir}target/${applicationFinalName}.war ${username}@${hostname}:${webTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.war\""
+                                sh "scp ${backModuleDir}target/${applicationFinalName}.war ${username}@${hostname}:${backTargetDir}"
                             }
                         } catch (e) {
                             currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to deploy the webapp to ${webTargetHostnames[i]} :" +e.getLocalizedMessage())
+                            notifySlack(slackChannel, "Failed to deploy the webapp to ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
                             throw e
                         }
 
                         try {
                             withCredentials([
                                     usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${webTargetHostnames[i]}", variable: 'hostname'),
+                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
                                     string(credentialsId: 'service.status', variable: 'status'),
                                     string(credentialsId: 'service.start', variable: 'start')
                             ]) {
-                                echo "Restart service on ${webTargetHostnames[i]}"
+                                echo "Restart service on ${backTargetHostnames[i]}"
                                 echo "--------------------------"
 
                                 echo 'start service'
-                                sh "ssh -tt ${username}@${hostname} \"${start} ${webServiceName}\""
+                                sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
 
                                 echo 'get service status'
-                                sh "ssh -tt ${username}@${hostname} \"${status} ${webServiceName}\""
+                                sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
                             }
 
                         } catch (e) {
                             currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to restrat the web service on ${webTargetHostnames[i]} :" +e.getLocalizedMessage())
+                            notifySlack(slackChannel, "Failed to restrat the web service on ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
                             throw e
                         }
 
@@ -348,14 +345,14 @@ node {
                     for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
                         try {
                             withCredentials([
-                                    usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                    usernamePassword(credentialsId: 'batchuser', passwordVariable: 'pass', usernameVariable: 'username'),
                                     string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
                             ]) {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                //sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${applicationFinalName} ${webTargetDir}${applicationFinalName}.jar\""
-                                //sh "scp ${batchModuleDir}target/${applicationFinalName}.jar ${username}@${hostname}:${webTargetDir}"
+                                //sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.jar\""
+                                //sh "scp ${batchModuleDir}target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
                             }
 
                         } catch (e) {
