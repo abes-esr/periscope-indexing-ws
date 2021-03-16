@@ -7,6 +7,7 @@ import fr.abes.periscope.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.service.FooService;
 import fr.abes.periscope.service.NoticesBibioService;
+import fr.abes.periscope.util.TrackExecutionTime;
 import fr.abes.periscope.util.UtilHibernate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -34,8 +35,10 @@ import java.util.Map;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
-    public static final int GRID_SIZE=8;
-    public static final int CHUNK_SIZE=10;
+    @Value("${gridSize}")
+    private int gridSize =8;
+    @Value("${chunkSize}")
+    private int chunkSize =10;
 
     @Autowired
     private JobBuilderFactory jobs;
@@ -72,7 +75,7 @@ public class BatchConfiguration {
     @Bean
     public PartitionHandler masterSlaveHandler() {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
-        handler.setGridSize(GRID_SIZE);
+        handler.setGridSize(gridSize);
         handler.setTaskExecutor(taskExecutor());
         handler.setStep(slaveStep());
         try {
@@ -85,7 +88,7 @@ public class BatchConfiguration {
 
     @Bean(name = "slave")
     public Step slaveStep() {
-        return stepBuilderFactory.get("slave").<NoticesBibio, NoticeSolrExtended>chunk(CHUNK_SIZE)
+        return stepBuilderFactory.get("slave").<NoticesBibio, NoticeSolrExtended>chunk(chunkSize)
                 .reader(slaveReader(null, null))
                 .processor(slaveProcessor(null)).writer(slaveWriter()).build();
     }
@@ -122,7 +125,7 @@ public class BatchConfiguration {
         parameters.put("minValue", minValue);
         parameters.put("maxValue", maxValue);
         reader.setParameterValues(parameters);
-        reader.setPageSize(CHUNK_SIZE);
+        reader.setPageSize(chunkSize);
         reader.setSaveState(false);
         log.info("slaveReader end " + minValue + " " + maxValue);
         return reader;
@@ -132,7 +135,7 @@ public class BatchConfiguration {
     private ItemWriterAdapter<NoticeSolr> slaveWriter() {
         ItemWriterAdapter<NoticeSolr> itemWriterAdapter = new ItemWriterAdapter<>();
         itemWriterAdapter.setTargetObject(fooService);
-        itemWriterAdapter.setTargetMethod("save");
+        itemWriterAdapter.setTargetMethod("saveOrDelete");
         itemWriterAdapter.setArguments(new BeanWrapperFieldExtractor[]{new BeanWrapperFieldExtractor<NoticeSolr>()});
         return itemWriterAdapter;
     }

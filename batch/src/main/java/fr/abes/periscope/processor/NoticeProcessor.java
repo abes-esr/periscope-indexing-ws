@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.entity.xml.NoticesBibio;
+import fr.abes.periscope.service.NoticeXmlService;
 import fr.abes.periscope.util.NoticeMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,9 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
     @Autowired
     private NoticeMapper noticeMapper;
 
+    @Autowired
+    private NoticeXmlService service;
+
     @Override
     public NoticeSolrExtended process(NoticesBibio notice) throws Exception {
         log.info("Processing " + threadName + " : notice n°" + notice.getId());
@@ -30,7 +34,10 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml(), NoticeXml.class);
-        return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
+        if (service.isRessourceContinue(noticeXml)) {
+            return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
+        }
+        return null;
 
     }
 }

@@ -2,6 +2,7 @@ package fr.abes.periscope.service;
 
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.repository.baseXml.NoticesBibioRepository;
+import fr.abes.periscope.util.TrackExecutionTime;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,15 @@ public class NoticesBibioService {
         return repository.findById(id).orElse(null);
     }
 
+    @TrackExecutionTime
     public Integer getMaxId() {
-        //return repository.findFirstByOrderByIdDesc().getId();
-        return 400;
+        //return repository.findMaxId();
+        return 10000;
     }
 
-    public Integer getMinId() { return repository.findMinId(); }
+    public Integer getMinId() {
+        return repository.findMinId();
+    }
 
     public List<NoticesBibio> findByIdBetween(Integer min, Integer max) {
         Query query = baseXmlEntityManager.createNamedQuery("findByIdBetween");

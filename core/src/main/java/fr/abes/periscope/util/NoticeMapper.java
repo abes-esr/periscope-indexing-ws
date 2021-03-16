@@ -70,7 +70,8 @@ public class NoticeMapper {
                 NoticeXml source = context.getSource();
                 NoticeSolrExtended target = new NoticeSolrExtended();
                 try {
-
+                    boolean deleteFlag = source.getLeader().substring(5,6).equalsIgnoreCase("d")?true:false;
+                    target.setToDelete(deleteFlag);
                     // ID
                     target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
 

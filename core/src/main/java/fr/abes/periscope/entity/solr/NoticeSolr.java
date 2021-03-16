@@ -100,6 +100,8 @@ public class NoticeSolr implements Serializable {
     @Indexed(name = NoticeField.NB_LOC, type = NoticeField.NB_LOC_TYPE)
     protected Integer nbLocation;
 
+    protected boolean toDelete;
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

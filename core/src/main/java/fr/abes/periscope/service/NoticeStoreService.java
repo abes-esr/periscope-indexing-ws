@@ -24,11 +24,19 @@ public class NoticeStoreService {
         this.noticeMapper = mapper;
     }
 
+    public NoticeSolrExtended saveOrDelete(NoticeSolrExtended notice) {
+        if (notice.isToDelete()) {
+            return delete(notice);
+        }
+        return save(notice);
+    }
+
     public NoticeSolrExtended save(NoticeSolrExtended notice) {
         return noticeRepository.save(notice);
     }
 
-    public void delete(NoticeSolrExtended notice) {
+    public NoticeSolrExtended delete(NoticeSolrExtended notice) {
         noticeRepository.delete(notice);
+        return notice;
     }
 }
