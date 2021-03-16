@@ -7,7 +7,7 @@ node {
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
-    def appFinalName = "periscope-indexing"
+    def applicationFinalName = "periscope-indexing"
     def executeTests = false
 
     // Definition des modules du projet
@@ -220,7 +220,7 @@ node {
 
             stage("Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${appFinalName}' -DwebBaseDir='${webTargetDir}${appFinalName}' -DbatchBaseDir='${batchTargetDir}${appFinalName}'"
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${webTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -233,7 +233,7 @@ node {
 
                 stage("artifact") {
                     try {
-                        archive "${webModuleDir}target/${appFinalName}.war"
+                        archive "${webModuleDir}target/${applicationFinalName}.war"
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -268,8 +268,6 @@ node {
                                 echo "--------------------------"
 
                                 try {
-                                    sh "ssh -v -tt ${username}@${hostname} \"whoami\""
-
                                     echo 'get service status'
                                     sh "ssh -tt ${username}@${hostname} \"${status} ${webServiceName}\""
 
@@ -305,8 +303,8 @@ node {
                                 echo "Deploy to ${webTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${appFinalName} ${webTargetDir}${appFinalName}.war\""
-                                sh "scp ${webModuleDir}target/${appFinalName}.war ${username}@${hostname}:${webTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${applicationFinalName} ${webTargetDir}${applicationFinalName}.war\""
+                                sh "scp ${webModuleDir}target/${applicationFinalName}.war ${username}@${hostname}:${webTargetDir}"
                             }
                         } catch (e) {
                             currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -356,8 +354,8 @@ node {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                //sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${appFinalName} ${webTargetDir}${appFinalName}.jar\""
-                                //sh "scp ${batchModuleDir}target/${appFinalName}.jar ${username}@${hostname}:${webTargetDir}"
+                                //sh "ssh -tt ${username}@${hostname} \"rm -rf ${webTargetDir}${applicationFinalName} ${webTargetDir}${applicationFinalName}.jar\""
+                                //sh "scp ${batchModuleDir}target/${applicationFinalName}.jar ${username}@${hostname}:${webTargetDir}"
                             }
 
                         } catch (e) {
