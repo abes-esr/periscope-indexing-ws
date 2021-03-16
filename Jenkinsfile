@@ -193,7 +193,7 @@ node {
         //-------------------------------
         if ("${executeBuild[moduleIndex]}" == 'true') {
 
-            stage("Edit properties files") {
+            stage("${projectModules[moduleIndex]}: Edit properties files") {
                 try {
                     withCredentials([
                             string(credentialsId: "periscope.solr-${profil}", variable: 'url')
@@ -216,7 +216,7 @@ node {
                 }
             }
 
-            stage("Compile package") {
+            stage("${projectModules[moduleIndex]}: Compile package") {
                 try {
                     sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
@@ -229,7 +229,7 @@ node {
 
             if ("${projectModules[moduleIndex]}" == 'web') {
 
-                stage("artifact") {
+                stage("${projectModules[moduleIndex]}: Artifact") {
                     try {
                         archive "${backModuleDir}target/${applicationFinalName}.war"
 
