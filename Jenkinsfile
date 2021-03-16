@@ -193,7 +193,7 @@ node {
         //-------------------------------
         // Build
         //-------------------------------
-        if ("${executeBuild[i]}" == 'true') {
+        if ("${executeBuild[moduleIndex]}" == 'true') {
 
             stage("Edit properties files") {
                 try {
@@ -203,12 +203,12 @@ node {
                         echo "Edition application-${profil}.properties"
                         echo "--------------------------"
 
-                        original = readFile "${projectModules[i]}/src/main/resources/application-${profil}.properties"
+                        original = readFile "${projectModules[moduleIndex]}/src/main/resources/application-${profil}.properties"
                         newconfig = original
 
                         newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${url}")
 
-                        writeFile file: "${projectModules[i]}/src/main/resources/application-${profil}.properties", text: "${newconfig}"
+                        writeFile file: "${projectModules[moduleIndex]}/src/main/resources/application-${profil}.properties", text: "${newconfig}"
                     }
 
                 } catch (e) {
@@ -220,7 +220,7 @@ node {
 
             stage("Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[i]} -am -P${profil} -DfinalName='${appFinalName}' -DwebBaseDir='${webTargetDir}${appFinalName}' -DbatchBaseDir='${batchTargetDir}${appFinalName}'"
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${appFinalName}' -DwebBaseDir='${webTargetDir}${appFinalName}' -DbatchBaseDir='${batchTargetDir}${appFinalName}'"
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -229,7 +229,7 @@ node {
                 }
             }
 
-            if ("${projectModules[i]}" == 'web') {
+            if ("${projectModules[moduleIndex]}" == 'web') {
 
                 stage("artifact") {
                     try {
@@ -247,11 +247,11 @@ node {
         //-------------------------------
         // Deploy
         //-------------------------------
-        if ("${executeDeploy[i]}" == 'true') {
+        if ("${executeDeploy[moduleIndex]}" == 'true') {
 
             //**************
             // on web servers
-            if ("${projectModules[i]}" == 'web') {
+            if ("${projectModules[moduleIndex]}" == 'web') {
 
                 stage("Deploy to web servers") {
 
@@ -344,7 +344,7 @@ node {
             //********
             // Batch
             //********
-            if ("${projectModules[i]}" == 'batch') {
+            if ("${projectModules[moduleIndex]}" == 'batch') {
 
                 stage("Deploy to batch servers") {
                     for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
