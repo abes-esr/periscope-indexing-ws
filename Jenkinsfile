@@ -165,7 +165,7 @@ node {
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
+            notifySlack(slackChannel,"Failed to set environnement variables: "+e.getLocalizedMessage())
             throw e
         }
     }
@@ -183,7 +183,7 @@ node {
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
+            notifySlack(slackChannel,"Failed to fetch SCM: "+e.getLocalizedMessage())
             throw e
         }
     }
@@ -213,7 +213,7 @@ node {
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    notifySlack(slackChannel, "Failed to edit module ${projectModules[moduleIndex]} properties files: "+e.getLocalizedMessage())
                     throw e
                 }
             }
@@ -224,7 +224,7 @@ node {
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel, e.getLocalizedMessage())
+                    notifySlack(slackChannel, "Failed to build module ${projectModules[moduleIndex]}: "+e.getLocalizedMessage())
                     throw e
                 }
             }
@@ -237,7 +237,7 @@ node {
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
-                        notifySlack(slackChannel, e.getLocalizedMessage())
+                        notifySlack(slackChannel, "Failed to artifact module ${projectModules[moduleIndex]}: "+ e.getLocalizedMessage())
                         throw e
                     }
                 }
@@ -362,7 +362,7 @@ node {
 
                         } catch (e) {
                             currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, e.getLocalizedMessage())
+                            notifySlack(slackChannel, "Failed to deploy batch on ${batchTargetHostnames[i]} :" +e.getLocalizedMessage())
                             throw e
                         }
                     }
