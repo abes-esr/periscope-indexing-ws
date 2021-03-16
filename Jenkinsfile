@@ -233,7 +233,7 @@ node {
 
                 stage("artifact") {
                     try {
-                        archive "${warDir}${appFinalName}.war"
+                        archive "${webModuleDir}target/${appFinalName}.war"
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
