@@ -347,7 +347,7 @@ node {
                     def downloadSpec = """{
                  "files": [
                   {
-                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}"
+                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}",
                       "pattern": "libs-release-local/*.war",
                       "target": "."
                     }
@@ -362,7 +362,7 @@ node {
                     def downloadSpec = """{
                  "files": [
                   {
-                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}"
+                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}",
                       "pattern": "libs-release-local/*.jar",
                       "target": "."
                     }
