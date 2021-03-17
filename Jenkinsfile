@@ -100,9 +100,8 @@ node {
             // Maven & Artifactory
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
-            env.MAVEN_HOME = maventool
             artifactoryServer = Artifactory.server '-1137809952@1458918089773'
-            //rtMaven.tool = 'Maven 3.3.9'
+            rtMaven.tool = 'Maven 3.3.9'
 
             // Action a faire
             if (params.ACTION == null) {
@@ -299,7 +298,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.active=${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                     // On deploie
                     buildInfo = Artifactory.newBuildInfo()
