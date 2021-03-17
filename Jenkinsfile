@@ -37,6 +37,7 @@ node {
     def candidateModules = []
     def executeBuild = []
     def executeTests = false
+    def buildNumber = -1
     def executeDeploy = []
     def backTargetHostnames = []
     def batchTargetHostnames = []
@@ -47,19 +48,15 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-    passedBuilds = []
 
     lastSuccessfullBuild(currentBuild.getPreviousBuild());
 
     // Definition des actions
-    def choiceParams = ['Compiler', 'Compiler & Deployer']
+    def choiceParams = ['Compiler', 'Compiler & Déployer']
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
         choiceParams.add("Compiler - ${modulesNames[moduleIndex]}")
-        choiceParams.add("Compiler & Deployer - ${modulesNames[moduleIndex]}")
-
-        for (int buildIndex = 0; buildIndex < passedBuilds.size(); buildIndex++) { //Pour chaque precedent build
-            choiceParams.add("Deployer - ${modulesNames[moduleIndex]} Build n°${passedBuilds[buildIndex].id}")
-        }
+        choiceParams.add("Compiler & Déployer - ${modulesNames[moduleIndex]}")
+        choiceParams.add("Déployer un build - ${modulesNames[moduleIndex]}")
     }
 
     // Configuration du job Jenkins
@@ -86,6 +83,7 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
+                    stringParam(defaultValue: '', description: 'Numéro du build à déployer', name: 'buildNumber'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -130,6 +128,17 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
+                } else if (params.ACTION == "Deployer un build - ${modulesNames[moduleIndex]}") {
+
+                    if (params.buildNumber == null || params.buildNumber == -1) {
+                        throw new Exception("No build number specified")
+                    }
+                    // On verifie si le build exists
+                    
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(false)
+                    executeDeploy.add(true)
+                    buildNumber = params.buildNumber
                 }
             }
 
@@ -330,6 +339,10 @@ node {
         //-------------------------------
         if ("${executeDeploy[moduleIndex]}" == 'true') {
 
+            if(buildNumber != -1) {
+                    echo "On recupère depuis artifact"
+            }
+
             //-------------------------------
             // Etape 4.1 : Serveur Web
             //-------------------------------
@@ -479,17 +492,4 @@ def notifySlack(String slackChannel, String info = '') {
             channel: "${slackChannel}",
             color: colorCode,
             message: message)
-}
-
-def lastSuccessfullBuild(build) {
-
-    if(build != null) {
-        echo build.id
-        //Recurse now to handle in chronological order
-        lastSuccessfullBuild(build.getPreviousBuild());
-        //Add the build to the array
-        if (build.result != hudson.model.Result.SUCCESS.toString()) {
-            passedBuilds.add(build);
-        }
-    }
 }
