@@ -53,7 +53,7 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-    def passedBuilds = []
+    passedBuilds = []
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
