@@ -48,13 +48,13 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-    
+
     // Definition des actions
-    def choiceParams = ['Compiler', 'Compiler & Déployer']
+    def choiceParams = ['Compiler', 'Compiler & Déployer', 'Déployer depuis un précédent build']
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
-        choiceParams.add("Compiler - ${modulesNames[moduleIndex]}")
-        choiceParams.add("Compiler & Déployer - ${modulesNames[moduleIndex]}")
-        choiceParams.add("Déployer un build - ${modulesNames[moduleIndex]}")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Compiler le module")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Compiler & Déployer le module")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build")
     }
 
     // Configuration du job Jenkins
@@ -114,19 +114,19 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
-                } else if (params.ACTION == 'Compiler & Deployer') {
+                } else if (params.ACTION == 'Compiler & Déployer') {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(true)
-                } else if (params.ACTION == "Compiler & Deployer - ${modulesNames[moduleIndex]}") {
+                } else if (params.ACTION == "[${modulesNames[moduleIndex]}] Compiler & Déployer le module") {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(true)
-                } else if (params.ACTION == "Compiler - ${modulesNames[moduleIndex]}") {
+                } else if (params.ACTION == "[${modulesNames[moduleIndex]}] Compiler le module") {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
-                } else if (params.ACTION == "Deployer un build - ${modulesNames[moduleIndex]}") {
+                } else if (params.ACTION == "Déployer depuis un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build") {
 
                     if (params.buildNumber == null || params.buildNumber == -1) {
                         throw new Exception("No build number specified")
