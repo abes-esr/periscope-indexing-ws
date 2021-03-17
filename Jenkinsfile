@@ -107,15 +107,15 @@ node {
             for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
 
                 if (params.ACTION == 'Compiler') {
-                    candidateModules.add(${modulesNames[moduleIndex]})
+                    candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
                 } else if (params.ACTION == 'Compiler & Deployer') {
-                    candidateModules.add(${modulesNames[moduleIndex]})
+                    candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(true)
                 } else if (params.ACTION == "Compiler & Deployer - ${modulesNames[moduleIndex]}") {
-                    candidateModules.add(${modulesNames[moduleIndex]})
+                    candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(true)
                 }
