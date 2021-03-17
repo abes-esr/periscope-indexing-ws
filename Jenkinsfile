@@ -275,7 +275,7 @@ node {
 
                 stage("${candidateModules[moduleIndex]}: Artifact") {
                     try {
-                        archive "${backModuleName}target/${applicationFinalName}.war"
+                        archive "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
