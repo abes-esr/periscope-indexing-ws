@@ -483,10 +483,12 @@ def notifySlack(String slackChannel, String info = '') {
 
 def lastSuccessfullBuild(build) {
 
-    if(build != null && build.result != 'FAILURE') {
+    if(build != null) {
         //Recurse now to handle in chronological order
         lastSuccessfullBuild(build.getPreviousBuild());
         //Add the build to the array
-        passedBuilds.add(build);
+        if (build.result != hudson.model.Result.SUCCESS.toString()) {
+            passedBuilds.add(build);
+        }
     }
 }
