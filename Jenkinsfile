@@ -48,11 +48,12 @@ node {
     def batchTargetHostnames = []
 
     // Variables globales
+    def ENV
     def maventool
     def rtMaven
-    def server
-    def ENV
     def mavenProfil
+    def artifactoryServer
+    def uploadSpec
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -95,7 +96,7 @@ node {
             // Maven
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
-            server = Artifactory.server '-1137809952@1458918089773'
+            artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = '-Xms1024m -Xmx4096m'
 
@@ -150,24 +151,24 @@ node {
 
             if (ENV == 'DEV') {
                 mavenProfil = "dev"
-                backTargetHostnames.add('hostname.server-back-1-dev')
-                backTargetHostnames.add('hostname.server-back-2-dev')
+                backTargetHostnames.add('hostname.artifactoryServer-back-1-dev')
+                backTargetHostnames.add('hostname.artifactoryServer-back-2-dev')
 
-                batchTargetHostnames.add('hostname.server-batch-1-dev')
+                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-dev')
 
             } else if (ENV == 'TEST') {
                 mavenProfil = "test"
-                backTargetHostnames.add('hostname.server-back-1-test')
-                backTargetHostnames.add('hostname.server-back-2-test')
+                backTargetHostnames.add('hostname.artifactoryServer-back-1-test')
+                backTargetHostnames.add('hostname.artifactoryServer-back-2-test')
 
-                batchTargetHostnames.add('hostname.server-batch-1-test')
+                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-test')
 
             } else if (ENV == 'PROD') {
                 mavenProfil = "prod"
-                backTargetHostnames.add('hostname.server-back-1-prod')
-                backTargetHostnames.add('hostname.server-back-2-prod')
+                backTargetHostnames.add('hostname.artifactoryServer-back-1-prod')
+                backTargetHostnames.add('hostname.artifactoryServer-back-2-prod')
 
-                batchTargetHostnames.add('hostname.server-batch-1-prod')
+                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-prod')
             }
 
         } catch (e) {
@@ -269,20 +270,47 @@ node {
             }
 
             //-------------------------------
-            // Etape 3.3 : Artifact
+            // Etape 3.3 : Archive the build
             //-------------------------------
-            if ("${candidateModules[moduleIndex]}" == 'web') {
+            stage("${candidateModules[moduleIndex]}: Archive artifacts") {
 
-                stage("${candidateModules[moduleIndex]}: Artifact") {
-                    try {
+                try {
+                    if ("${candidateModules[moduleIndex]}" == 'web') {
                         archive "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"
-
-                    } catch (e) {
-                        currentBuild.result = hudson.model.Result.FAILURE.toString()
-                        notifySlack(slackChannel, "Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
-                        throw e
                     }
+
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
+                        archive "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"
+                    }
+
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
+                    throw e
                 }
+            }
+
+            //-------------------------------
+            // Etape 3.4 : Send to Artifactory
+            //-------------------------------
+            stage("${candidateModules[moduleIndex]}: Send to Artifactory") {
+
+                try {
+                    rtMaven.deployer artifactoryServer: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                    buildInfo = Artifactory.newBuildInfo()
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install -Dmaven.test.skip=true -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+
+                    rtMaven.deployer.deployArtifacts buildInfo
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    buildInfo.env.capture = true
+                    artifactoryServer.publishBuildInfo buildInfo
+
+                } catch(e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel,"Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
+                    throw e
+                }
+
             }
         }
 
@@ -402,24 +430,6 @@ node {
             }
         }
     } //Pour chaque module du projet
-
-    /*stage ('Artifactory configuration') {
-        try {
-            rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-            buildInfo = Artifactory.newBuildInfo()
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: '-U clean install -Dmaven.test.skip=true '
-
-            rtMaven.deployer.deployArtifacts buildInfo
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
-            buildInfo.env.capture = true
-            server.publishBuildInfo buildInfo
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }*/
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
     notifySlack(slackChannel,"Congratulation !")
