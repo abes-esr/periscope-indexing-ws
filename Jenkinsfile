@@ -298,10 +298,10 @@ node {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                     buildInfo = Artifactory.newBuildInfo()
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install -Dmaven.test.skip=true -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install -Dmaven.test.skip=true"
 
                     rtMaven.deployer.deployArtifacts buildInfo
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true"
                     buildInfo.env.capture = true
                     artifactoryServer.publishBuildInfo buildInfo
 
