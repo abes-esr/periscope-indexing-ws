@@ -6,6 +6,8 @@ Ce script se veut le plus generique possible et comporte 2 zones a editer pour v
  */
 import hudson.model.Result
 
+passedBuilds = []
+
 node {
 
     /*
@@ -53,7 +55,6 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-    passedBuilds = []
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -478,6 +479,8 @@ def lastSuccessfullBuild(build) {
         //Recurse now to handle in chronological order
         lastSuccessfullBuild(build.getPreviousBuild());
         //Add the build to the array
+        echo "on a un build"
+        echo build
         passedBuilds.add(build);
     }
 }
