@@ -230,7 +230,7 @@ node {
             //-------------------------------
             // Etape 3.1 : Edition des fichiers de proprietes
             //-------------------------------
-            stage("${candidateModules[moduleIndex]}: Edit properties files") {
+            stage("[${candidateModules[moduleIndex]}] Edit properties files") {
                 try {
                     echo "Edition application-${mavenProfil}.properties"
                     echo "--------------------------"
@@ -279,7 +279,7 @@ node {
             //-------------------------------
             // Etape 3.2 : Compilation
             //-------------------------------
-            stage("${candidateModules[moduleIndex]}: Compile package") {
+            stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
                     sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
@@ -289,52 +289,32 @@ node {
                     throw e
                 }
             }
+        }
 
-            //-------------------------------
-            // Etape 3.3 : Archive the build
-            //-------------------------------
-            stage("${candidateModules[moduleIndex]}: Archive artifacts") {
-
-                try {
-                    if ("${candidateModules[moduleIndex]}" == 'web') {
-                        archive "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"
-                    }
-
-                    if ("${candidateModules[moduleIndex]}" == 'batch') {
-                        archive "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"
-                    }
-
-                } catch (e) {
-                    currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel, "Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
-                    throw e
-                }
-            }
-
-            //-------------------------------
-            // Etape 3.4 : Send to Artifactory
-            //-------------------------------
-            stage("${candidateModules[moduleIndex]}: Send to Artifactory") {
-
+        //-------------------------------
+        // Etape 3.4 : Archive to Artifactory
+        //-------------------------------
+        if ("${executeBuild[moduleIndex]}" == 'true') {
+            stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.opts =  "-Xms1024m -Xmx4096m -Dmaven.test.skip='${!executeTests}' -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
-                    // On build et on deploie
+                    // On deploie
                     buildInfo = Artifactory.newBuildInfo()
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install"
                     buildInfo.name = artifactoryBuildName
                     rtMaven.deployer.deployArtifacts buildInfo
 
-                    // On build et on publie
+                    // On publie
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2"
                     buildInfo.name = artifactoryBuildName
                     buildInfo.env.capture = true
                     artifactoryServer.publishBuildInfo buildInfo
 
-                } catch(e) {
+                } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel,"Failed to deploy and publish module ${candidateModules[moduleIndex]} to Artifactory: "+ e.getLocalizedMessage())
+                    notifySlack(slackChannel, "Failed to deploy and publish module ${candidateModules[moduleIndex]} to Artifactory: " + e.getLocalizedMessage())
                     throw e
                 }
             }
