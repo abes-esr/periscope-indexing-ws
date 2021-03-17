@@ -29,7 +29,7 @@ node {
     def backServiceName = "tomcat9-periscope-indexing.service"
 
     // Definition du module batch
-    def batchTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
+    def batchTargetDir = "/home/batch/periscope"
 
     // **** FIN DE ZONE A EDITER n°1 ****
 
@@ -388,8 +388,8 @@ node {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                //sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.jar\""
-                                //sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName}.jar\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
