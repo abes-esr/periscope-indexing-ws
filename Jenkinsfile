@@ -388,8 +388,8 @@ node {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName}.jar\""
-                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${applicationFinalName}.jar\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${batchTargetDir}"
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
