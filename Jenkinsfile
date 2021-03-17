@@ -54,6 +54,7 @@ node {
     // Definition des actions
     def choiceParams = ['Compiler', 'Compiler & Deployer']
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+        choiceParams.add("Compiler - ${modulesNames[moduleIndex]}")
         choiceParams.add("Compiler & Deployer - ${modulesNames[moduleIndex]}")
 
         for (int buildIndex = 0; buildIndex < passedBuilds.size(); buildIndex++) { //Pour chaque precedent build
@@ -157,24 +158,24 @@ node {
 
             if (ENV == 'DEV') {
                 mavenProfil = "dev"
-                backTargetHostnames.add('hostname.artifactoryServer-back-1-dev')
-                backTargetHostnames.add('hostname.artifactoryServer-back-2-dev')
+                backTargetHostnames.add('hostname.server-back-1-dev')
+                backTargetHostnames.add('hostname.server-back-2-dev')
 
-                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-dev')
+                batchTargetHostnames.add('hostname.server-batch-1-dev')
 
             } else if (ENV == 'TEST') {
                 mavenProfil = "test"
-                backTargetHostnames.add('hostname.artifactoryServer-back-1-test')
-                backTargetHostnames.add('hostname.artifactoryServer-back-2-test')
+                backTargetHostnames.add('hostname.server-back-1-test')
+                backTargetHostnames.add('hostname.server-back-2-test')
 
-                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-test')
+                batchTargetHostnames.add('hostname.server-batch-1-test')
 
             } else if (ENV == 'PROD') {
                 mavenProfil = "prod"
-                backTargetHostnames.add('hostname.artifactoryServer-back-1-prod')
-                backTargetHostnames.add('hostname.artifactoryServer-back-2-prod')
+                backTargetHostnames.add('hostname.server-back-1-prod')
+                backTargetHostnames.add('hostname.server-back-2-prod')
 
-                batchTargetHostnames.add('hostname.artifactoryServer-batch-1-prod')
+                batchTargetHostnames.add('hostname.server-batch-1-prod')
             }
 
         } catch (e) {
