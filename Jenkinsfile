@@ -22,7 +22,7 @@ node {
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
     def applicationFinalName = "periscope-indexing"
-    def modulesNames = ["web","batch"]
+    def modulesNames = ["web", "batch"]
 
     // Definition du module web
     def backTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
@@ -191,29 +191,32 @@ node {
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-            notifySlack(slackChannel,"Failed to set environnement variables: "+e.getLocalizedMessage())
+            notifySlack(slackChannel, "Failed to set environnement variables: " + e.getLocalizedMessage())
             throw e
         }
     }
 
-    //-------------------------------
-    // Etape 2 : Recuperation du code
-    //-------------------------------
-    stage('SCM checkout') {
-        try {
-            checkout([
-                    $class                           : 'GitSCM',
-                    branches                         : [[name: "${params.BRANCH_TAG}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions                       : [],
-                    submoduleCfg                     : [],
-                    userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
-            ])
+    if (buildNumber == -1) {
 
-        } catch (e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,"Failed to fetch SCM: "+e.getLocalizedMessage())
-            throw e
+        //-------------------------------
+        // Etape 2 : Recuperation du code
+        //-------------------------------
+        stage('SCM checkout') {
+            try {
+                checkout([
+                        $class                           : 'GitSCM',
+                        branches                         : [[name: "${params.BRANCH_TAG}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions                       : [],
+                        submoduleCfg                     : [],
+                        userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
+                ])
+
+            } catch (e) {
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                notifySlack(slackChannel, "Failed to fetch SCM: " + e.getLocalizedMessage())
+                throw e
+            }
         }
     }
 
@@ -338,7 +341,36 @@ node {
         if ("${executeDeploy[moduleIndex]}" == 'true') {
 
             if(buildNumber != -1) {
-                    echo "On recupère depuis artifact"
+
+                if ("${candidateModules[moduleIndex]}" == 'web') {
+
+                    def downloadSpec = """{
+                 "files": [
+                  {
+                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}"
+                      "pattern": "libs-release-local/*.war",
+                      "target": "."
+                    }
+                 ]
+                }"""
+                    artifactoryServer.download spec: downloadSpec
+                    sh("ls -l")
+                }
+
+                if ("${candidateModules[moduleIndex]}" == 'batch') {
+
+                    def downloadSpec = """{
+                 "files": [
+                  {
+                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}"
+                      "pattern": "libs-release-local/*.jar",
+                      "target": "."
+                    }
+                 ]
+                }"""
+                    artifactoryServer.download spec: downloadSpec
+                    sh("ls -l")
+                }
             }
 
             //-------------------------------
