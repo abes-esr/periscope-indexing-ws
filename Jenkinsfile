@@ -126,6 +126,10 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(true)
+                } else if (params.ACTION == "Compiler - ${modulesNames[moduleIndex]}") {
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(true)
+                    executeDeploy.add(false)
                 }
             }
 
