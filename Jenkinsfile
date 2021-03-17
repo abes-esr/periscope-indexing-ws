@@ -53,7 +53,7 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-    def uploadSpec
+    def passedBuilds = []
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -170,6 +170,9 @@ node {
 
                 batchTargetHostnames.add('hostname.artifactoryServer-batch-1-prod')
             }
+
+            lastSuccessfullBuild(currentBuild.getPreviousBuild());
+            echo "${passedBuilds}"
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
@@ -468,4 +471,13 @@ def notifySlack(String slackChannel, String info = '') {
             channel: "${slackChannel}",
             color: colorCode,
             message: message)
+}
+
+def lastSuccessfullBuild(build) {
+    if(build != null && build.result != 'FAILURE') {
+        //Recurse now to handle in chronological order
+        lastSuccessfullBuild(build.getPreviousBuild());
+        //Add the build to the array
+        passedBuilds.add(build);
+    }
 }
