@@ -21,6 +21,7 @@ node {
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
+    def artifactoryBuildName = "periscope-indexing"
     def applicationFinalName = "periscope-indexing"
     def modulesNames = ["web", "batch"]
 
@@ -320,15 +321,17 @@ node {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                     buildInfo = Artifactory.newBuildInfo()
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install -Dmaven.test.skip=true"
-
+                    buildInfo.name = artifactoryBuildName
                     rtMaven.deployer.deployArtifacts buildInfo
+
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true"
+                    buildInfo.name = artifactoryBuildName
                     buildInfo.env.capture = true
                     artifactoryServer.publishBuildInfo buildInfo
 
                 } catch(e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel,"Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
+                    notifySlack(slackChannel,"Failed to send module ${candidateModules[moduleIndex]} to Artifactory: "+ e.getLocalizedMessage())
                     throw e
                 }
 
