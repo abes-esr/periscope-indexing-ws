@@ -58,6 +58,7 @@ node {
 
         for (int buildIndex = 0; buildIndex < passedBuilds.size(); buildIndex++) { //Pour chaque precedent build
             choiceParams.add("Deployer - ${modulesNames[moduleIndex]} Build n°${passedBuilds[buildIndex].id}")
+        }
     }
 
     // Configuration du job Jenkins
