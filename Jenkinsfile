@@ -33,12 +33,6 @@ node {
 
     // **** FIN DE ZONE A EDITER n°1 ****
 
-    // Definition des actions
-    def choiceParams = ['Compiler', 'Compiler & Deployer']
-    for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
-        choiceParams.add("Compiler & Deployer - ${modulesNames[moduleIndex]}")
-    }
-
     // Variables de configuration d'execution
     def candidateModules = []
     def executeBuild = []
@@ -54,7 +48,17 @@ node {
     def mavenProfil
     def artifactoryServer
     passedBuilds = []
-    countCheckedBuilds = 0
+
+    lastSuccessfullBuild(currentBuild.getPreviousBuild());
+
+    // Definition des actions
+    def choiceParams = ['Compiler', 'Compiler & Deployer']
+    for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+        choiceParams.add("Compiler & Deployer - ${modulesNames[moduleIndex]}")
+
+        for (int buildIndex = 0; buildIndex < passedBuilds.size(); buildIndex++) { //Pour chaque precedent build
+            choiceParams.add("Deployer - ${modulesNames[moduleIndex]} Build n°${passedBuilds[buildIndex].id}")
+    }
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -171,9 +175,6 @@ node {
 
                 batchTargetHostnames.add('hostname.artifactoryServer-batch-1-prod')
             }
-
-            lastSuccessfullBuild(currentBuild.getPreviousBuild());
-            echo "${passedBuilds}"
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
@@ -476,22 +477,10 @@ def notifySlack(String slackChannel, String info = '') {
 
 def lastSuccessfullBuild(build) {
 
-    echo "build ${build}"
-
-    if (countCheckedBuilds > 10) {
-        return
-    }
-
     if(build != null && build.result != 'FAILURE') {
         //Recurse now to handle in chronological order
         lastSuccessfullBuild(build.getPreviousBuild());
         //Add the build to the array
-        echo "on a un build"
-        echo build
         passedBuilds.add(build);
     }
-
-    countCheckedBuilds = countCheckedBuilds+1
-
-    lastSuccessfullBuild(build.getPreviousBuild());
 }
