@@ -484,6 +484,7 @@ def notifySlack(String slackChannel, String info = '') {
 def lastSuccessfullBuild(build) {
 
     if(build != null) {
+        echo build.id
         //Recurse now to handle in chronological order
         lastSuccessfullBuild(build.getPreviousBuild());
         //Add the build to the array
