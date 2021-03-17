@@ -1,37 +1,58 @@
 //this is the scripted method with groovy engine
+/*
+Ce script Jenkinsfile permet de compiler et de deployer votre projet
+sur les environnements de DEV, TEST et PROD
+Ce script se veut le plus generique possible et comporte 2 zones a editer pour votre projet
+ */
 import hudson.model.Result
 
 node {
+
+    /*
+   Cette zone correspond a la definition de la structure de votre projet.
+   Habituellement, les projets comportent 3 sous-module : core, web et batch
+   mais seulement web et batch sont a deployer.
+   Si votre projet ne contient pas un sous-module definit ci-dessous, laissez les valeurs par defaut.
+    */
+
+    // **** DEBUT DE ZONE A EDITER n°1 ****
 
     // Configuration du projet
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
     def applicationFinalName = "periscope-indexing"
-    def executeTests = false
+    def modulesNames = ["web","batch"]
 
     // Definition du module web
-    def backModuleDir = "web/"
-    def backTargetHostnames = []
     def backTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
     def backServiceName = "tomcat9-periscope-indexing.service"
 
     // Definition du module batch
-    def batchModuleDir = "batch/"
-    def batchTargetHostnames = []
     def batchTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
 
-    // Variables de configuration du build
-    def projectModules = []
+    // **** FIN DE ZONE A EDITER n°1 ****
+
+    // Definition des actions
+    def choiceParams = ['Compiler', 'Compiler & Deployer']
+    for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+        choiceParams.add("Compiler & Deployer - ${modulesNames[moduleIndex]}")
+    }
+
+    // Variables de configuration d'execution
+    def candidateModules = []
     def executeBuild = []
+    def executeTests = false
     def executeDeploy = []
+    def backTargetHostnames = []
+    def batchTargetHostnames = []
 
     // Variables globales
     def maventool
     def rtMaven
     def server
     def ENV
-    def profil
+    def mavenProfil
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -45,7 +66,7 @@ node {
                             numToKeepStr: '5')
             ),
             parameters([
-                    choice(choices: ['Compiler', 'Compiler & Deployer', 'Compiler & Deployer : Web', 'Compiler & Deployer : Batch'], description: 'Que voulez-vous faire ?', name: 'ACTION'),
+                    choice(choices: $choiceParams, description: 'Que voulez-vous faire ?', name: 'ACTION'),
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
@@ -62,6 +83,9 @@ node {
             ])
     ])
 
+    //-------------------------------
+    // Etape 1 : Configuration
+    //-------------------------------
     stage('Set environnement variables') {
         try {
             // Java
@@ -78,42 +102,27 @@ node {
             // Action a faire
             if (params.ACTION == null) {
                 throw new Exception("Variable ACTION is null")
-
-            } else if (params.ACTION == 'Compiler') {
-                projectModules.add("web")
-                executeBuild.add(true)
-                executeDeploy.add(false)
-
-                projectModules.add("batch")
-                executeBuild.add(true)
-                executeDeploy.add(false)
-
-            } else if (params.ACTION == 'Compiler & Deployer') {
-                projectModules.add("web")
-                executeBuild.add(true)
-                executeDeploy.add(true)
-
-                projectModules.add("batch")
-                executeBuild.add(true)
-                executeDeploy.add(true)
-
-            } else if (params.ACTION == 'Compiler & Deployer : Web') {
-                projectModules.add("web")
-                executeBuild.add(true)
-                executeDeploy.add(true)
-
-            } else if (params.ACTION == 'Compiler & Deployer : Batch') {
-                projectModules.add("batch")
-                executeBuild.add(true)
-                executeDeploy.add(true)
-
-            } else {
-                throw new Exception("Unable to decode variable ACTION")
             }
 
-            // On verifie que les tableaux ont bien ete remplis
-            if(projectModules.size() != executeBuild.size() || projectModules.size() != executeDeploy.size() || executeBuild.size() != executeDeploy.size()) {
-                throw new Exception("Arrays projectModules, executeBuild and executeDeploy have a different size")
+            for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+
+                if (params.ACTION == 'Compiler') {
+                    candidateModules.add(${modulesNames[moduleIndex]})
+                    executeBuild.add(true)
+                    executeDeploy.add(false)
+                } else if (params.ACTION == 'Compiler & Deployer') {
+                    candidateModules.add(${modulesNames[moduleIndex]})
+                    executeBuild.add(true)
+                    executeDeploy.add(true)
+                } else if (params.ACTION == "Compiler & Deployer - ${modulesNames[moduleIndex]}") {
+                    candidateModules.add(${modulesNames[moduleIndex]})
+                    executeBuild.add(true)
+                    executeDeploy.add(true)
+                }
+            }
+
+            if (candidateModules.size() == 0) {
+                throw new Exception("Unable to decode variable ACTION")
             }
 
             // Branche a deployer
@@ -140,21 +149,21 @@ node {
             }
 
             if (ENV == 'DEV') {
-                profil = "dev"
+                mavenProfil = "dev"
                 backTargetHostnames.add('hostname.server-back-1-dev')
                 backTargetHostnames.add('hostname.server-back-2-dev')
 
                 batchTargetHostnames.add('hostname.server-batch-1-dev')
 
             } else if (ENV == 'TEST') {
-                profil = "test"
+                mavenProfil = "test"
                 backTargetHostnames.add('hostname.server-back-1-test')
                 backTargetHostnames.add('hostname.server-back-2-test')
 
                 batchTargetHostnames.add('hostname.server-batch-1-test')
 
             } else if (ENV == 'PROD') {
-                profil = "prod"
+                mavenProfil = "prod"
                 backTargetHostnames.add('hostname.server-back-1-prod')
                 backTargetHostnames.add('hostname.server-back-2-prod')
 
@@ -168,6 +177,9 @@ node {
         }
     }
 
+    //-------------------------------
+    // Etape 2 : Recuperation du code
+    //-------------------------------
     stage('SCM checkout') {
         try {
             checkout([
@@ -186,56 +198,88 @@ node {
         }
     }
 
-    for (int moduleIndex = 0; moduleIndex < projectModules.size(); moduleIndex++) { //Pour chaque module du projet
+    for (int moduleIndex = 0; moduleIndex < candidateModules.size(); moduleIndex++) { //Pour chaque module du projet
 
         //-------------------------------
-        // Build
+        // Etape 3 : Compilation
         //-------------------------------
         if ("${executeBuild[moduleIndex]}" == 'true') {
 
-            stage("${projectModules[moduleIndex]}: Edit properties files") {
+            //-------------------------------
+            // Etape 3.1 : Edition des fichiers de proprietes
+            //-------------------------------
+            stage("${candidateModules[moduleIndex]}: Edit properties files") {
                 try {
-                    withCredentials([
-                            string(credentialsId: "periscope.solr-${profil}", variable: 'url')
-                    ]) {
-                        echo "Edition application-${profil}.properties"
-                        echo "--------------------------"
+                    echo "Edition application-${mavenProfil}.properties"
+                    echo "--------------------------"
 
-                        original = readFile "${projectModules[moduleIndex]}/src/main/resources/application-${profil}.properties"
-                        newconfig = original
+                    original = readFile "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties"
+                    newconfig = original
 
-                        newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${url}")
+                    /*
+                   Cette zone correspond à l'edition des fichiers de proprietes.
+                   C'est ici que l'on insere les donnees sensibles dans les fichiers de proprietes (application.properties)
+                   Les donnees sensibles sont definit comme des Credentials Jenkins de type Secret Text.
+                   A vous d'ajouter dans Jenkins vos credentials de donnees sensensibles et de les remplacer
+                    */
 
-                        writeFile file: "${projectModules[moduleIndex]}/src/main/resources/application-${profil}.properties", text: "${newconfig}"
+                    // **** DEBUT DE ZONE A EDITER n°2 ****
+
+                    // Module web
+                    if ("${candidateModules[moduleIndex]}" == 'web') {
+                        withCredentials([
+                                string(credentialsId: "periscope.solr-${mavenProfil}", variable: 'url')
+                        ]) {
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${url}")
+                        }
                     }
 
+                    // Module batch
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
+                        withCredentials([
+                                string(credentialsId: "periscope.solr-${mavenProfil}", variable: 'url')
+                        ]) {
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${url}")
+                        }
+                    }
+
+                    // **** FIN DE ZONE A EDITER n°2 ****
+
+                    writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties", text: "${newconfig}"
+
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel, "Failed to edit module ${projectModules[moduleIndex]} properties files: "+e.getLocalizedMessage())
+                    notifySlack(slackChannel, "Failed to edit module ${candidateModules[moduleIndex]} properties files: "+e.getLocalizedMessage())
                     throw e
                 }
             }
 
-            stage("${projectModules[moduleIndex]}: Compile package") {
+            //-------------------------------
+            // Etape 3.2 : Compilation
+            //-------------------------------
+            stage("${candidateModules[moduleIndex]}: Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${projectModules[moduleIndex]} -am -P${profil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel, "Failed to build module ${projectModules[moduleIndex]}: "+e.getLocalizedMessage())
+                    notifySlack(slackChannel, "Failed to build module ${candidateModules[moduleIndex]}: "+e.getLocalizedMessage())
                     throw e
                 }
             }
 
-            if ("${projectModules[moduleIndex]}" == 'web') {
+            //-------------------------------
+            // Etape 3.3 : Artifact
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'web') {
 
-                stage("${projectModules[moduleIndex]}: Artifact") {
+                stage("${candidateModules[moduleIndex]}: Artifact") {
                     try {
-                        archive "${backModuleDir}target/${applicationFinalName}.war"
+                        archive "${backModuleName}target/${applicationFinalName}.war"
 
                     } catch (e) {
                         currentBuild.result = hudson.model.Result.FAILURE.toString()
-                        notifySlack(slackChannel, "Failed to artifact module ${projectModules[moduleIndex]}: "+ e.getLocalizedMessage())
+                        notifySlack(slackChannel, "Failed to artifact module ${candidateModules[moduleIndex]}: "+ e.getLocalizedMessage())
                         throw e
                     }
                 }
@@ -243,27 +287,30 @@ node {
         }
 
         //-------------------------------
-        // Deploy
+        // Etape 4 : Deploiement
         //-------------------------------
         if ("${executeDeploy[moduleIndex]}" == 'true') {
 
-            //**************
-            // on web servers
-            if ("${projectModules[moduleIndex]}" == 'web') {
+            //-------------------------------
+            // Etape 4.1 : Serveur Web
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'web') {
 
                 stage("Deploy to web servers") {
 
                     for (int i = 0; i < backTargetHostnames.size(); i++) { //Pour chaque serveur
-                        try {
-                            withCredentials([
-                                    usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
-                                    string(credentialsId: 'service.status', variable: 'status'),
-                                    string(credentialsId: 'service.stop', variable: 'stop'),
-                                    string(credentialsId: 'service.start', variable: 'start')
-                            ]) {
-                                echo "Stop service on ${backTargetHostnames[i]}"
-                                echo "--------------------------"
+                        withCredentials([
+                                usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
+                                string(credentialsId: 'service.status', variable: 'status'),
+                                string(credentialsId: 'service.stop', variable: 'stop'),
+                                string(credentialsId: 'service.start', variable: 'start')
+                        ]) {
+
+                            echo "Stop service on ${backTargetHostnames[i]}"
+                            echo "--------------------------"
+
+                            try {
 
                                 try {
                                     echo 'get service status'
@@ -286,80 +333,69 @@ node {
                                     sh "ssh -tt ${username}@${hostname} \"${stop} ${backServiceName}\""
                                 }
 
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to stop the web service on ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
                             }
-                        } catch (e) {
-                            currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to stop the web service on ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
-                            throw e
-                        }
 
-                        try {
-                            withCredentials([
-                                    usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname')
-                            ]) {
-                                echo "Deploy to ${backTargetHostnames[i]}"
-                                echo "--------------------------"
+                            echo "Deploy to ${backTargetHostnames[i]}"
+                            echo "--------------------------"
 
+                            try {
                                 sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.war\""
-                                sh "scp ${backModuleDir}target/${applicationFinalName}.war ${username}@${hostname}:${backTargetDir}"
+                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war ${username}@${hostname}:${backTargetDir}"
+
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to deploy the webapp to ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
                             }
-                        } catch (e) {
-                            currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to deploy the webapp to ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
-                            throw e
-                        }
 
-                        try {
-                            withCredentials([
-                                    usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
-                                    string(credentialsId: 'service.status', variable: 'status'),
-                                    string(credentialsId: 'service.start', variable: 'start')
-                            ]) {
-                                echo "Restart service on ${backTargetHostnames[i]}"
-                                echo "--------------------------"
+                            echo "Restart service on ${backTargetHostnames[i]}"
+                            echo "--------------------------"
 
+                            try {
                                 echo 'start service'
                                 sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
 
                                 echo 'get service status'
                                 sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
-                            }
 
-                        } catch (e) {
-                            currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to restrat the web service on ${backTargetHostnames[i]} :" +e.getLocalizedMessage())
-                            throw e
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to restrat the web service on ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
                         }
 
                     }//Pour chaque serveur
                 }
             }
 
-            //********
-            // Batch
-            //********
-            if ("${projectModules[moduleIndex]}" == 'batch') {
+            //-------------------------------
+            // Etape 4.2 : Serveur Batch
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'batch') {
 
                 stage("Deploy to batch servers") {
                     for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
-                        try {
-                            withCredentials([
-                                    usernamePassword(credentialsId: 'batchuser', passwordVariable: 'pass', usernameVariable: 'username'),
-                                    string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
-                            ]) {
+                        withCredentials([
+                                usernamePassword(credentialsId: 'batchuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
+                        ]) {
+                            try {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
                                 //sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.jar\""
-                                //sh "scp ${batchModuleDir}target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
+                                //sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${backTargetDir}"
+                                
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to deploy batch on ${batchTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
                             }
-
-                        } catch (e) {
-                            currentBuild.result = hudson.model.Result.FAILURE.toString()
-                            notifySlack(slackChannel, "Failed to deploy batch on ${batchTargetHostnames[i]} :" +e.getLocalizedMessage())
-                            throw e
                         }
                     }
                 }
