@@ -381,7 +381,7 @@ node {
                 stage("Deploy to batch servers") {
                     for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
                         withCredentials([
-                                usernamePassword(credentialsId: 'batchuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                usernamePassword(credentialsId: 'batchuserpass', passwordVariable: 'pass', usernameVariable: 'username'),
                                 string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
                         ]) {
                             try {
