@@ -48,9 +48,7 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
-
-    lastSuccessfullBuild(currentBuild.getPreviousBuild());
-
+    
     // Definition des actions
     def choiceParams = ['Compiler', 'Compiler & Déployer']
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
@@ -134,7 +132,7 @@ node {
                         throw new Exception("No build number specified")
                     }
                     // On verifie si le build exists
-                    
+
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
                     executeDeploy.add(true)
