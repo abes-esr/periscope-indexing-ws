@@ -97,12 +97,11 @@ node {
             env.JAVA_HOME = "${tool 'Open JDK 11'}"
             env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
-            // Maven
+            // Maven & Artifactory
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
             artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
-            rtMaven.opts = '-Xms1024m -Xmx4096m'
 
             // Action a faire
             if (params.ACTION == null) {
@@ -319,22 +318,25 @@ node {
 
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                    rtMaven.opts =  "-Xms1024m -Xmx4096m -Dmaven.test.skip='${!executeTests}' -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+
+                    // On build et on deploie
                     buildInfo = Artifactory.newBuildInfo()
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install -Dmaven.test.skip=true"
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install"
                     buildInfo.name = artifactoryBuildName
                     rtMaven.deployer.deployArtifacts buildInfo
 
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true"
+                    // On build et on publie
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2"
                     buildInfo.name = artifactoryBuildName
                     buildInfo.env.capture = true
                     artifactoryServer.publishBuildInfo buildInfo
 
                 } catch(e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
-                    notifySlack(slackChannel,"Failed to send module ${candidateModules[moduleIndex]} to Artifactory: "+ e.getLocalizedMessage())
+                    notifySlack(slackChannel,"Failed to deploy and publish module ${candidateModules[moduleIndex]} to Artifactory: "+ e.getLocalizedMessage())
                     throw e
                 }
-
             }
         }
 
@@ -348,14 +350,15 @@ node {
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
                     def downloadSpec = """{
-                 "files": [
-                  {   
-                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}",                  
-                      "pattern": "libs-snapshot-local/*.war",
-                      "target": "./"
-                    }
-                 ]
-                }"""
+                     "flat" : true,
+                     "files": [
+                      {   
+                          "build": "${artifactoryBuildName}/${buildNumber}",                  
+                          "pattern": "*/*.war",
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"
+                        }
+                     ]
+                    }"""
                     artifactoryServer.download spec: downloadSpec
                     sh("ls -l")
                 }
@@ -363,14 +366,15 @@ node {
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
 
                     def downloadSpec = """{
-                 "files": [
-                  {
-                      "build": "Periscope_indexing_multibranch_pipeline :: Jenkins/${buildNumber}",
-                      "pattern": "libs-snapshot-local/*.jar",
-                      "target": "./"
-                    }
-                 ]
-                }"""
+                     "flat" : true,
+                     "files": [
+                      {
+                          "build": "${artifactoryBuildName}/${buildNumber}",
+                          "pattern": "*/*.jar",
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"
+                        }
+                     ]
+                    }"""
                     artifactoryServer.download spec: downloadSpec
                     sh("ls -l")
                 }
