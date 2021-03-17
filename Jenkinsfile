@@ -66,7 +66,7 @@ node {
                             numToKeepStr: '5')
             ),
             parameters([
-                    choice(choices: ${choiceParams}, description: 'Que voulez-vous faire ?', name: 'ACTION'),
+                    choice(choices: choiceParams, description: 'Que voulez-vous faire ?', name: 'ACTION'),
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
