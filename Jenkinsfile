@@ -134,6 +134,8 @@ node {
                         throw new Exception("No build number specified")
                     }
 
+                    buildNumber = params.BUILD_NUMBER
+
                     downloadSpec = """{                    
                          "files": [
                           {  
@@ -156,7 +158,6 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
                     executeDeploy.add(true)
-                    buildNumber = params.BUILD_NUMBER
                 }
             }
 
