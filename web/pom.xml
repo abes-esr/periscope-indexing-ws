@@ -111,6 +111,7 @@
 	<!--     Configuration de la compilation                         -->
 	<!-- =========================================================== -->
 	<build>
+		<finalName>${warName}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

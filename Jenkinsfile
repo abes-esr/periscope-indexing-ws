@@ -23,10 +23,10 @@ node {
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
     def applicationBuildName = "periscope-indexing"
-    def applicationFinalName = "periscope-indexing"
     def modulesNames = ["web", "batch"]
 
     // Definition du module web
+    def backApplicationFileName = "periscope-indexing"
     def backTargetDir = "/usr/local/tomcat9-periscope-indexing/webapps/"
     def backServiceName = "tomcat9-periscope-indexing.service"
 
@@ -102,7 +102,6 @@ node {
             // Maven & Artifactory
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
-            buildInfo = Artifactory.newBuildInfo()
             artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = "-Xms1024m -Xmx4096m"
@@ -284,9 +283,9 @@ node {
             //-------------------------------
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DwarName='${backApplicationFileName}' -DwebBaseDir='${backTargetDir}${backApplicationFileName}' -DbatchBaseDir='${batchTargetDir}${backApplicationFileName}'"
                     // ATTENTION, rtMaven.run ne tient pas compte des arguments de compilation
-                    //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
+                    //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -294,6 +293,9 @@ node {
                     throw e
                 }
             }
+        }
+
+        if ("${executeBuild[moduleIndex]}" == 'true') {
 
             //-------------------------------
             // Etape 3.3 : Deploiement sur Artifactory
@@ -301,7 +303,8 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    buildInfo.name = "${applicationBuildName}-${candidateModules[moduleIndex]}"
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -P${mavenProfil} -DwarName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
+                    buildInfo.name = "${applicationBuildName}"
                     rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
 
@@ -335,7 +338,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}-${candidateModules[moduleIndex]}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
                                     }                              
@@ -347,7 +350,7 @@ node {
                         }"""
 
                         artifactoryServer.download spec: downloadSpec
-                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war")
                     }
 
                     if ("${candidateModules[moduleIndex]}" == 'batch') {
@@ -357,7 +360,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}-${candidateModules[moduleIndex]}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
                                     }                              
@@ -369,7 +372,7 @@ node {
                         }"""
 
                         artifactoryServer.download spec: downloadSpec
-                        sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.jar")
                     }
 
                 } catch (e) {
@@ -431,8 +434,8 @@ node {
                             echo "--------------------------"
 
                             try {
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${applicationFinalName} ${backTargetDir}${applicationFinalName}.war\""
-                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war ${username}@${hostname}:${backTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war ${username}@${hostname}:${backTargetDir}"
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -476,8 +479,8 @@ node {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
 
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${applicationFinalName}.jar\""
-                                sh "scp ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar ${username}@${hostname}:${batchTargetDir}"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.jar ${username}@${hostname}:${batchTargetDir}"
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
