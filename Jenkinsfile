@@ -30,7 +30,7 @@ node {
     def backServiceName = "tomcat9-periscope-indexing.service"
 
     // Definition du module batch
-    def batchTargetDir = "/home/batch/periscope"
+    def batchTargetDir = "/home/batch/periscope/"
 
     // **** FIN DE ZONE A EDITER n°1 ****
 
@@ -344,7 +344,7 @@ node {
                          "files": [
                           {   
                               "build": "${artifactoryBuildName}/${buildNumber}",
-                              "pattern": "libs-snapshot-local/${candidateModules[moduleIndex]}*.war",
+                              "pattern": "libs-snapshot-local/${candidateModules[moduleIndex]}(*).war",
                               "target": "${candidateModules[moduleIndex]}/target/",
                               "flat": true                      
                             }
