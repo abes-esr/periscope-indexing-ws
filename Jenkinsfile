@@ -329,7 +329,7 @@ node {
 
             if(buildNumber != -1) {
 
-                sh "'${maventool}/bin/mvn' clean'"
+                sh("${maventool}/bin/mvn clean")
                 sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
 
                 if ("${candidateModules[moduleIndex]}" == 'web') {
@@ -346,6 +346,7 @@ node {
                     }"""
                     artifactoryServer.download spec: downloadSpec
                     sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+
                     sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                 }
 
