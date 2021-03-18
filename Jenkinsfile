@@ -338,7 +338,7 @@ node {
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",             
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
-                          "flat" : false
+                          "flat" : true
                         }
                      ]
                     }"""
