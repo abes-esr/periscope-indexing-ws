@@ -332,15 +332,14 @@ node {
                     def downloadSpec = """{                    
                      "files": [
                       {   
-                          "build": "${artifactoryBuildName}/${buildNumber}",                  
-                          "pattern": "*/*.war",
+                          "build": "${artifactoryBuildName}/${buildNumber}",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
                           "flat" : true
                         }
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    sh("ls -l")
+                    sh("tree")
                 }
 
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
@@ -348,15 +347,14 @@ node {
                     def downloadSpec = """{                     
                      "files": [
                       {
-                          "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "*/*.jar",
+                          "build": "${artifactoryBuildName}/${buildNumber}",                        
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
                           "flat" : true
                         }
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    sh("ls -l")
+                    sh("tree")
                 }
             }
 
