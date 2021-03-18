@@ -336,8 +336,7 @@ node {
                     def downloadSpec = """{                    
                      "files": [
                       {   
-                          "build": "${artifactoryBuildName}/${buildNumber}",
-                          "excludePatterns": ["*.pom"],
+                          "build": "${artifactoryBuildName}/${buildNumber}"                 
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
                           "flat" : false
                         }
@@ -353,7 +352,7 @@ node {
                      "files": [
                       {
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                           "excludePatterns": ["*.pom"],
+                          "pattern": "${artifactoryBuildName}/*.jar",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
                           "flat" : false
                         }
