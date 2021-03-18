@@ -134,6 +134,25 @@ node {
                         throw new Exception("No build number specified")
                     }
 
+                    downloadSpec = """{                    
+                         "files": [
+                          {  
+                              "aql": {
+                                    "items.find": {
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"}                                   
+                                    }                              
+                                }                                               
+                            }
+                         ]
+                        }"""
+
+                    buildInfo = artifactoryServer.download spec: downloadSpec
+
+                    if (buildInfo.getArtifacts().size() == 0) {
+                        throw new Exception("Unable to find the build in Artifactory")
+                    }
+
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
                     executeDeploy.add(true)
@@ -356,8 +375,9 @@ node {
                         }"""
 
                         buildInfo = artifactoryServer.download spec: downloadSpec
-
-                        echo("${buildInfo.buildNumber}")
+                        if (buildInfo.getArtifacts().size() == 0) {
+                            throw new Exception("Unable to retrieve the war from Artifactory")
+                        }
 
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
@@ -381,6 +401,10 @@ node {
                         }"""
 
                         buildInfo = artifactoryServer.download spec: downloadSpec
+                        if (buildInfo.getArtifacts().size() == 0) {
+                            throw new Exception("Unable to retrieve the jar from Artifactory")
+                        }
+
                         sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
                     }
 
