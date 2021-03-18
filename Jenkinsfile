@@ -22,7 +22,7 @@ node {
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
-    def artifactoryBuildName = "periscope-indexing"
+    def applicationBuildName = "periscope-indexing"
     def applicationFinalName = "periscope-indexing"
     def modulesNames = ["web", "batch"]
 
@@ -84,7 +84,7 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/api/build/${artifactoryBuildName}", name: 'BUILD_NUMBER'),
+                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/api/build/${applicationBuildName}", name: 'BUILD_NUMBER'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -299,7 +299,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    buildInfo.name = artifactoryBuildName
+                    buildInfo.name = "${applicationBuildName}-${candidateModules[moduleIndex]}"
                     rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
 
@@ -333,7 +333,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}-${candidateModules[moduleIndex]}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
                                     }                              
@@ -355,7 +355,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}-${candidateModules[moduleIndex]}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
                                     }                              
