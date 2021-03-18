@@ -1,21 +1,22 @@
 //this is the scripted method with groovy engine
 /*
-Ce script Jenkinsfile permet de compiler et de deployer votre projet
+Ce Jenkinsfile permet de compiler et de deployer la partie web et/ou la partie batch du projet.
 sur les environnements de DEV, TEST et PROD
-Ce script se veut le plus generique possible et comporte 2 zones a editer pour votre projet
+Ce script se veut le plus generique possible et comporte 2 zones a editer specifiquement au projet
  */
 import hudson.model.Result
 
 node {
 
-    /*
-   Cette zone correspond a la definition de la structure de votre projet.
-   Habituellement, les projets comportent 3 sous-module : core, web et batch
-   mais seulement web et batch sont a deployer.
-   Si votre projet ne contient pas un sous-module definit ci-dessous, laissez les valeurs par defaut.
-    */
-
     // **** DEBUT DE ZONE A EDITER n°1 ****
+
+    /*
+    Cette zone contient la definition de la structure interne du projet.
+    Le tableau modulesNames contient les modules concernes par la compilation et le deploiement.
+    Dans cette exemple, il s'agit des modules 'web' et 'batch'
+    Les variables de definition des modules (backTargetDir, backServiceName,...)
+    permettent de renseigner les specifications sur les environements cibles.
+     */
 
     // Configuration du projet
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
@@ -58,8 +59,6 @@ node {
         choiceParams.add("[${modulesNames[moduleIndex]}] Compiler & Déployer le module")
         choiceParams.add("[${modulesNames[moduleIndex]}] Déployer un précédent build")
     }
-
-    currentBuild.description = " Retrouver lemy new description"
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -134,7 +133,6 @@ node {
                     if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
                         throw new Exception("No build number specified")
                     }
-                    // On verifie si le build exists
 
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
@@ -241,18 +239,19 @@ node {
                     original = readFile "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties"
                     newconfig = original
 
-                    /*
-                   Cette zone correspond à l'edition des fichiers de proprietes.
-                   C'est ici que l'on insere les donnees sensibles dans les fichiers de proprietes (application.properties)
-                   Les donnees sensibles sont definit comme des Credentials Jenkins de type Secret Text.
-                   A vous d'ajouter dans Jenkins vos credentials de donnees sensensibles et de les remplacer
-                    */
-
                     // **** DEBUT DE ZONE A EDITER n°2 ****
+
+                    /*
+                      Cette zone permet d'editer les fichiers de proprietes pour les environnements cibles.
+                      C'est ici que l'on insere les donnees sensibles dans les fichiers de proprietes (application.properties)
+                      Les donnees sensibles sont stockees dans Jenkins comme des Credentials de type Secret Text.
+                      A vous d'ajouter dans Jenkins vos credentials de donnees sensensibles et de les remplacer ici
+                     */
 
                     // Module web
                     if ("${candidateModules[moduleIndex]}" == 'web') {
                         withCredentials([
+                                // on charge le credential "periscope.solr-dev" dans la variable 'url'
                                 string(credentialsId: "periscope.solr-${mavenProfil}", variable: 'url')
                         ]) {
                             newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${url}")
@@ -334,8 +333,8 @@ node {
                 // Etape 4.0 : On recupere depuis Artifactory
                 //-------------------------------
                 try {
-                    // On clean parce que Jenkins a deja pull le repo
-                    sh("${maventool}/bin/mvn clean")
+                    // On clean l'espace de travail
+                    //sh("${maventool}/bin/mvn clean")
                     sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
                     if ("${candidateModules[moduleIndex]}" == 'web') {
