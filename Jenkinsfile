@@ -299,20 +299,14 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-
                     rtMaven.deployer.addProperty("spring.profiles.active","${mavenProfil}".toString()).addProperty("finalName", "${applicationFinalName}".toString()).addProperty("webBaseDir", "${backTargetDir}${applicationFinalName}".toString()).addProperty("batchBaseDir", "${batchTargetDir}${applicationFinalName}".toString())
                     rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true"
 
-                    // On deploie
                     buildInfo = Artifactory.newBuildInfo()
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "-U clean install"
-                    buildInfo.name = artifactoryBuildName
-                    rtMaven.deployer.deployArtifacts buildInfo
-
-                    // On publie
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.repo.local=.m2"
                     buildInfo.name = artifactoryBuildName
                     buildInfo.env.capture = true
+                    rtMaven.run pom: 'pom.xml', goals: "-U clean install", buildInfo: buildInfo
+                    rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
 
                 } catch (e) {
