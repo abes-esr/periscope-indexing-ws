@@ -345,7 +345,7 @@ node {
                           {  
                               "aql": "items.find(
                                 {
-                                    "archive.item.artifact.module.build.name":{"\$eq:"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.name":{"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"*.war"}
                                 }
