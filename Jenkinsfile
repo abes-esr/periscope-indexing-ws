@@ -283,7 +283,8 @@ node {
             //-------------------------------
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
-                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    //sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -291,16 +292,13 @@ node {
                     throw e
                 }
             }
-        }
 
-        //-------------------------------
-        // Etape 3.4 : Archive to Artifactory
-        //-------------------------------
-        if ("${executeBuild[moduleIndex]}" == 'true') {
+            //-------------------------------
+            // Etape 3.3 : Deploiement sur Artifactory
+            //-------------------------------
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.test.skip=true -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
                     buildInfo.name = artifactoryBuildName
                     rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
