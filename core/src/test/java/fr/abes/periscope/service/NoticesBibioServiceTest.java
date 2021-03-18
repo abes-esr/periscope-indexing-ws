@@ -19,8 +19,4 @@ public class NoticesBibioServiceTest {
         assertThat(service.findById(1).getId()).isEqualTo(1);
     }
 
-    @Test
-    void testFindByIdBetween(){
-        assertThat(service.findByIdBetween(1,3).size()).isEqualTo(2);
-    }
 }

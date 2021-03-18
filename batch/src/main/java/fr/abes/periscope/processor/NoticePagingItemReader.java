@@ -74,8 +74,8 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         Assert.notNull(this.queryProvider, "QueryProvider may not be null");
         this.queryProvider.init(this.dataSource);
-        this.firstPageSql = this.queryProvider.generateFirstPageQuery(this.getPageSize());
-        this.remainingPagesSql = this.queryProvider.generateRemainingPagesQuery(this.getPageSize());
+        this.firstPageSql = this.queryProvider.generateFirstPageQuery(this.fetchSize);
+        this.remainingPagesSql = this.queryProvider.generateRemainingPagesQuery(this.fetchSize);
     }
 
     @TrackExecutionTime
@@ -98,8 +98,8 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
             }
         } else {
             this.previousStartAfterValues = this.startAfterValues;
-            Integer index = ((BigDecimal) this.startAfterValues.get("id")).intValue() - (Integer)this.parameterValues.get("minValue") + 1;
-            String jumpToQuery = this.queryProvider.generateJumpToItemQuery(index, this.getPageSize());
+            Integer index = this.getPage() * this.fetchSize;
+            String jumpToQuery = this.queryProvider.generateJumpToItemQuery(index, this.fetchSize);
             log.debug("SQL used for reading remaining pages: [" + jumpToQuery + "]");
             query = this.namedParameterJdbcTemplate.query(jumpToQuery, this.getParameterMap(this.parameterValues, this.startAfterValues), rowCallback);
         }
