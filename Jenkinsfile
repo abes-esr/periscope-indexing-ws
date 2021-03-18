@@ -283,8 +283,9 @@ node {
             //-------------------------------
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
-                    //sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
-                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    // rtMaven.run ne tient pas compte des arguments de compilation
+                    //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
