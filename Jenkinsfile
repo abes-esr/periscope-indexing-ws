@@ -338,7 +338,7 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "libs-*-local/*.war",
+                          "pattern": "generic-local/*.war",
                           "target": "${candidateModules[moduleIndex]}/target/",
                           "flat": true                      
                         }
