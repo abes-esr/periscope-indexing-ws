@@ -284,7 +284,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
                     sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DwarName='${backApplicationFileName}' -DwebBaseDir='${backTargetDir}${backApplicationFileName}' -DbatchBaseDir='${batchTargetDir}${backApplicationFileName}'"
-                    // ATTENTION, rtMaven.run ne tient pas compte des arguments de compilation -D
+                    // ATTENTION #1, rtMaven.run ne tient pas compte des arguments de compilation -D
                     //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
 
                 } catch (e) {
@@ -350,6 +350,7 @@ node {
                         }"""
 
                         artifactoryServer.download spec: downloadSpec
+                        // Suite au bug #1, on renomme le war
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war")
                     }
 
@@ -372,7 +373,6 @@ node {
                         }"""
 
                         artifactoryServer.download spec: downloadSpec
-                        sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.jar")
                     }
 
                 } catch (e) {
@@ -480,7 +480,7 @@ node {
                                 echo "--------------------------"
 
                                 sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
-                                sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.jar ${username}@${hostname}:${batchTargetDir}"
+                                sh "scp ${candidateModules[moduleIndex]}/target/*.jar ${username}@${hostname}:${batchTargetDir}"
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
