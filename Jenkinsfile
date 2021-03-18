@@ -299,7 +299,6 @@ node {
         if ("${executeBuild[moduleIndex]}" == 'true') {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
-                    rtMaven.resolver server: artifactoryServer, releaseRepo: 'main', snapshotRepo: 'main'
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
 
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean install -Dmaven.test.skip=true -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'".toString()
