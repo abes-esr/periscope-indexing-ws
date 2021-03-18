@@ -337,7 +337,7 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "target/*.war",
+                          "excludePatterns": ["*.pom"],
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
                           "flat" : false
                         }
@@ -353,7 +353,7 @@ node {
                      "files": [
                       {
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "target/*.jar",
+                           "excludePatterns": ["*.pom"],
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
                           "flat" : false
                         }
