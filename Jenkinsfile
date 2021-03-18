@@ -299,7 +299,9 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.active=${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+
+                    rtMaven.deployer.addProperty("spring.profiles.active","${mavenProfil}").addProperty("finalName", "${applicationFinalName}").addProperty("webBaseDir", "${backTargetDir}${applicationFinalName}").addProperty("batchBaseDir", "${batchTargetDir}${applicationFinalName}")
+                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true"
 
                     // On deploie
                     buildInfo = Artifactory.newBuildInfo()
@@ -354,7 +356,7 @@ node {
                          ]
                         }"""
 
-                        artifactoryServer.download spec: downloadSpec 
+                        artifactoryServer.download spec: downloadSpec
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
 
