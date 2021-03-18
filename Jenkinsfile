@@ -329,8 +329,8 @@ node {
 
             if(buildNumber != -1) {
 
-                sh("${maventool}/bin/mvn clean")
-                sh("mkdir -p ${candidateModules[moduleIndex]}/target")
+                //sh("${maventool}/bin/mvn clean")
+                //sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
@@ -338,7 +338,9 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "*/*.war"                                            
+                          "pattern": "*/*.war",
+                          "target": "${candidateModules[moduleIndex]}/target/",
+                          "flat": true                      
                         }
                      ]
                     }"""
