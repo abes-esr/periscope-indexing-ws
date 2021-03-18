@@ -301,7 +301,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.activero   r   =${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.active=${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                     // On deploie
                     buildInfo = Artifactory.newBuildInfo()
@@ -330,7 +330,11 @@ node {
 
             if(buildNumber != -1) {
 
+                //-------------------------------
+                // Etape 4.0 : On recupere depuis Artifactory
+                //-------------------------------
                 try {
+                    // On clean parce que Jenkins a deja pull de repo
                     sh("${maventool}/bin/mvn clean")
                     sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
@@ -340,7 +344,7 @@ node {
                          "files": [
                           {   
                               "build": "${artifactoryBuildName}/${buildNumber}",
-                              "pattern": "libs-snapshot-local/*.war",
+                              "pattern": "libs-snapshot-local/${candidateModules[moduleIndex]}*.war",
                               "target": "${candidateModules[moduleIndex]}/target/",
                               "flat": true                      
                             }
@@ -356,7 +360,7 @@ node {
                              "files": [
                               {   
                                   "build": "${artifactoryBuildName}/${buildNumber}",
-                                  "pattern": "libs-release-local/*.war",
+                                  "pattern": "libs-release-local/${candidateModules[moduleIndex]}*.war",
                                   "target": "${candidateModules[moduleIndex]}/target/",
                                   "flat": true                      
                                 }
@@ -373,7 +377,7 @@ node {
                          "files": [
                           {   
                               "build": "${artifactoryBuildName}/${buildNumber}",
-                              "pattern": "libs-snapshot-local/*.jar",
+                              "pattern": "libs-snapshot-local/${candidateModules[moduleIndex]}*.jar",
                               "target": "${candidateModules[moduleIndex]}/target/",
                               "flat": true                      
                             }
@@ -389,7 +393,7 @@ node {
                              "files": [
                               {   
                                   "build": "${artifactoryBuildName}/${buildNumber}",
-                                  "pattern": "libs-release-local/*.war",
+                                  "pattern": "libs-release-local/${candidateModules[moduleIndex]}*.jar",
                                   "target": "${candidateModules[moduleIndex]}/target/",
                                   "flat": true                      
                                 }
