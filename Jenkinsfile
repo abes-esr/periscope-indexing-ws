@@ -298,7 +298,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.active=${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
+                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true -Dspring.profiles.activero   r   =${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
 
                     // On deploie
                     buildInfo = Artifactory.newBuildInfo()
@@ -329,13 +329,13 @@ node {
 
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
-                    def downloadSpec = """{
-                     "flat" : true,
+                    def downloadSpec = """{                    
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",                  
                           "pattern": "*/*.war",
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
+                          "flat" : true
                         }
                      ]
                     }"""
@@ -345,13 +345,13 @@ node {
 
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
 
-                    def downloadSpec = """{
-                     "flat" : true,
+                    def downloadSpec = """{                     
                      "files": [
                       {
                           "build": "${artifactoryBuildName}/${buildNumber}",
                           "pattern": "*/*.jar",
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
+                          "flat" : true
                         }
                      ]
                     }"""
