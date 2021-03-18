@@ -338,16 +338,20 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "*/*.war",
-                          "target": "${candidateModules[moduleIndex]}/target/",
-                          "flat": true                      
+                          "pattern": "*/*.war"                                            
                         }
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
 
-                    sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
+                    try {
+                        sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
+                    } catch (e) {
+                        currentBuild.result = hudson.model.Result.FAILURE.toString()
+                        notifySlack(slackChannel, "Failed to retrieve module ${candidateModules[moduleIndex]} from Artifactory: " + e.getLocalizedMessage())
+                        throw e
+                    }
                 }
 
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
