@@ -52,11 +52,11 @@ node {
     def downloadSpec
 
     // Definition des actions
-    def choiceParams = ['Compiler', 'Compiler & Déployer', 'Déployer depuis un précédent build']
+    def choiceParams = ['Compiler', 'Compiler & Déployer', 'Déployer un précédent build']
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
         choiceParams.add("[${modulesNames[moduleIndex]}] Compiler le module")
         choiceParams.add("[${modulesNames[moduleIndex]}] Compiler & Déployer le module")
-        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer depuis un précédent build")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer un précédent build")
     }
 
     currentBuild.description = " Retrouver lemy new description"
@@ -129,7 +129,7 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
-                } else if (params.ACTION == "Déployer depuis un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer depuis un précédent build") {
+                } else if (params.ACTION == "Déployer un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer un précédent build") {
 
                     if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
                         throw new Exception("No build number specified")
