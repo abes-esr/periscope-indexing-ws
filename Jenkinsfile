@@ -151,6 +151,8 @@ node {
 
                     buildInfo = artifactoryServer.download spec: downloadSpec
 
+                    echo buildInfo.getArtifacts().size()
+
                     if (buildInfo.getArtifacts().size() == 0) {
                         throw new Exception("Unable to find the build in Artifactory")
                     }
