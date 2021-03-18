@@ -27,8 +27,7 @@ public class NoticesBibioService {
 
     @TrackExecutionTime
     public Integer getMaxId() {
-        //return repository.findMaxId();
-        return 10000;
+        return repository.findMaxId();
     }
 
     public Integer getMinId() {

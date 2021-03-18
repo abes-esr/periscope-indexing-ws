@@ -1,14 +1,14 @@
 package fr.abes.periscope;
 
 import fr.abes.periscope.partitioner.RangePartitioner;
+import fr.abes.periscope.processor.NoticePagingItemReader;
 import fr.abes.periscope.processor.NoticeProcessor;
-import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.entity.xml.NoticesBibio;
+import fr.abes.periscope.processor.SolrItemWriter;
 import fr.abes.periscope.service.FooService;
 import fr.abes.periscope.service.NoticesBibioService;
-import fr.abes.periscope.util.TrackExecutionTime;
-import fr.abes.periscope.util.UtilHibernate;
+import fr.abes.periscope.util.NoticesBibioMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersIncrementer;
@@ -16,9 +16,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
-import org.springframework.batch.item.adapter.ItemWriterAdapter;
-import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
+import org.springframework.batch.item.database.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,10 +44,14 @@ public class BatchConfiguration {
     private StepBuilderFactory stepBuilderFactory;
     @Autowired
     private EntityManagerFactory baseXmlEntityManager;
+
     @Autowired
     private NoticesBibioService noticesBibioService;
     @Autowired
     private FooService fooService;
+
+    long startTime;
+    long endTime;
 
     @Autowired
     protected DataSource baseXmlDataSource;
@@ -60,20 +62,21 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job jobIndexerTableNoticesBibio() {
+    public Job jobIndexerTableNoticesBibio() throws Exception {
+        startTime = System.currentTimeMillis();
         return this.jobs.get("indexerTableNoticesBibio").incrementer(incrementer())
                 .start(managerStep())
                 .build();
     }
 
     @Bean
-    public Step managerStep() {
+    public Step managerStep() throws Exception {
         return stepBuilderFactory.get("managerStep").partitioner(slaveStep().getName(), rangePartitioner())
                 .partitionHandler(masterSlaveHandler()).build();
     }
 
     @Bean
-    public PartitionHandler masterSlaveHandler() {
+    public PartitionHandler masterSlaveHandler() throws Exception {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
         handler.setGridSize(gridSize);
         handler.setTaskExecutor(taskExecutor());
@@ -87,7 +90,7 @@ public class BatchConfiguration {
     }
 
     @Bean(name = "slave")
-    public Step slaveStep() {
+    public Step slaveStep() throws Exception {
         return stepBuilderFactory.get("slave").<NoticesBibio, NoticeSolrExtended>chunk(chunkSize)
                 .reader(slaveReader(null, null))
                 .processor(slaveProcessor(null)).writer(slaveWriter()).build();
@@ -105,6 +108,24 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
+    public NoticePagingItemReader<NoticesBibio> slaveReader(@Value("#{stepExecutionContext['minValue']}") Integer minValue,
+                                                            @Value("#{stepExecutionContext['maxValue']}") Integer maxValue) throws Exception {
+        log.debug("slaveReader start " + minValue + " " + maxValue);
+        NoticePagingItemReader reader = new NoticePagingItemReader();
+        reader.setDataSource(baseXmlDataSource);
+        reader.setFetchSize(chunkSize);
+        reader.setQueryProvider(queryProvider());
+        Map<String, Integer> parameters = new HashMap<>();
+        parameters.put("minValue", minValue);
+        parameters.put("maxValue", maxValue);
+        reader.setParameterValues(parameters);
+        reader.setRowMapper(new NoticesBibioMapper());
+        reader.setSaveState(true);
+        return reader;
+    }
+
+    @Bean
+    @StepScope
     public NoticeProcessor slaveProcessor(@Value("#{stepExecutionContext[name]}") String name) {
         log.info("Appel au slaveProcessor");
         NoticeProcessor noticeProcessor = new NoticeProcessor();
@@ -114,31 +135,21 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
-    public JpaPagingItemReader<NoticesBibio> slaveReader(
-            @Value("#{stepExecutionContext['minValue']}") Integer minValue,
-            @Value("#{stepExecutionContext['maxValue']}") Integer maxValue) {
-        log.info("slaveReader start " + minValue + " " + maxValue);
-        JpaPagingItemReader reader = new JpaPagingItemReader();
-        reader.setEntityManagerFactory(baseXmlEntityManager);
-        reader.setQueryString(UtilHibernate.findNamedQuery(baseXmlEntityManager, "findByIdBetween").query());
-        Map parameters = new HashMap();
-        parameters.put("minValue", minValue);
-        parameters.put("maxValue", maxValue);
-        reader.setParameterValues(parameters);
-        reader.setPageSize(chunkSize);
-        reader.setSaveState(false);
-        log.info("slaveReader end " + minValue + " " + maxValue);
-        return reader;
+    public SolrItemWriter slaveWriter() {
+        return new SolrItemWriter(fooService);
     }
 
-
-    private ItemWriterAdapter<NoticeSolr> slaveWriter() {
-        ItemWriterAdapter<NoticeSolr> itemWriterAdapter = new ItemWriterAdapter<>();
-        itemWriterAdapter.setTargetObject(fooService);
-        itemWriterAdapter.setTargetMethod("saveOrDelete");
-        itemWriterAdapter.setArguments(new BeanWrapperFieldExtractor[]{new BeanWrapperFieldExtractor<NoticeSolr>()});
-        return itemWriterAdapter;
+    private NoticeQueryProvider queryProvider() throws Exception {
+        NoticeQueryProvider provider = new NoticeQueryProvider();
+        provider.setSelectClause("id, NVL2(data_xml, (data_xml).getClobVal(), NULL) as data_xml");
+        provider.setFromClause("autorites.noticesbibio");
+        provider.setWhereClause("id >= :minValue and id < :maxValue");
+        Map<String, Order> sortKeys = new HashMap<>();
+        sortKeys.put("id", Order.ASCENDING);
+        provider.setSortKeys(sortKeys);
+        return provider;
     }
+
 
     protected JobParametersIncrementer incrementer() {
         return new TimeIncrementer();

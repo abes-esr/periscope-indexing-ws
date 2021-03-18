@@ -1,0 +1,17 @@
+package fr.abes.periscope.util;
+
+import fr.abes.periscope.entity.xml.NoticesBibio;
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class NoticesBibioMapper implements RowMapper<NoticesBibio> {
+    @Override
+    public NoticesBibio mapRow(ResultSet resultSet, int i) throws SQLException {
+        NoticesBibio notice = new NoticesBibio();
+        notice.setId(resultSet.getInt("id"));
+        notice.setDataXml(resultSet.getString("data_xml"));
+        return notice;
+    }
+}

@@ -8,7 +8,6 @@ import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.util.NoticeMapper;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ public class SolrIntegrationTest {
 
     @Test
     @DisplayName("ajout d'une notice avec exemplaire")
-    @Disabled
     public void addNoticeToSolr() throws IOException {
 
         //File file = new File("/work/developpement/projects/periscope/documents/base_xml/13282261X.xml");
@@ -53,7 +51,6 @@ public class SolrIntegrationTest {
 
     @Test
     @DisplayName("supression d'une notice avec exemplaire")
-    @Disabled
     public void deleteNoticeToSolr() throws IOException {
 
         File file = new File("/work/developpement/projects/periscope/documents/base_xml/13282261X.xml");

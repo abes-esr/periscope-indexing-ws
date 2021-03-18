@@ -29,7 +29,7 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
 
     @Override
     public NoticeSolrExtended process(NoticesBibio notice) throws Exception {
-        log.info("Processing " + threadName + " : notice n°" + notice.getId());
+        log.debug("Processing " + threadName + " : notice n°" + notice.getId());
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
@@ -38,6 +38,5 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
             return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
         }
         return null;
-
     }
 }

@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Représente la couche service pour les Notices
  */
@@ -24,19 +27,33 @@ public class NoticeStoreService {
         this.noticeMapper = mapper;
     }
 
-    public NoticeSolrExtended saveOrDelete(NoticeSolrExtended notice) {
-        if (notice.isToDelete()) {
-            return delete(notice);
-        }
-        return save(notice);
+    public void saveOrDelete(List<NoticeSolrExtended> notice) {
+        List noticeToDelete = new ArrayList();
+        List noticeToUpdate = new ArrayList();
+        notice.forEach(n -> {
+            if (n.isToDelete()) {
+                noticeToDelete.add(n);
+            } else {
+                noticeToUpdate.add(n);
+            }
+        });
+        saveList(noticeToUpdate);
+        deleteList(noticeToDelete);
+    }
+
+    public Iterable<NoticeSolrExtended> saveList(List<NoticeSolrExtended> notice) {
+        return noticeRepository.saveAll(notice);
+    }
+
+    public void deleteList(List<NoticeSolrExtended> notice) {
+        noticeRepository.deleteAll(notice);
+    }
+
+    public void delete(NoticeSolrExtended notice) {
+        noticeRepository.delete(notice);
     }
 
     public NoticeSolrExtended save(NoticeSolrExtended notice) {
         return noticeRepository.save(notice);
-    }
-
-    public NoticeSolrExtended delete(NoticeSolrExtended notice) {
-        noticeRepository.delete(notice);
-        return notice;
     }
 }

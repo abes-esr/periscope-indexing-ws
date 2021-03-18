@@ -13,9 +13,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Table(name = "NOTICESBIBIO", schema = "AUTORITES")
-@org.hibernate.annotations.NamedQuery(
-        name = "findByIdBetween",
-        query = "select n from NoticesBibio n where n.id >= :minValue and n.id < :maxValue")
 public class NoticesBibio implements Serializable {
     @Id
     @Column(name = "ID")
