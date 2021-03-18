@@ -133,30 +133,7 @@ node {
                     if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
                         throw new Exception("No build number specified")
                     }
-
                     buildNumber = params.BUILD_NUMBER
-
-                    downloadSpec = """{                    
-                         "files": [
-                          {  
-                              "aql": {
-                                    "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
-                                    "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"}                                   
-                                    }                              
-                                }                                               
-                            }
-                         ]
-                        }"""
-
-                    buildInfo = artifactoryServer.download spec: downloadSpec
-
-                    echo buildInfo.getArtifacts().size().toString()
-
-                    if (buildInfo.getArtifacts().size() == 0) {
-                        throw new Exception("Unable to find the build in Artifactory")
-                    }
-
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
                     executeDeploy.add(true)
@@ -379,7 +356,7 @@ node {
 
                         buildInfo = artifactoryServer.download spec: downloadSpec
                         if (buildInfo.getArtifacts().size() == 0) {
-                            throw new Exception("Unable to retrieve the war from Artifactory")
+                            throw new Exception("Unable to find the build")
                         }
 
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
