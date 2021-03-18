@@ -330,7 +330,7 @@ node {
             if(buildNumber != -1) {
 
                 sh("${maventool}/bin/mvn clean")
-                sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+                sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
