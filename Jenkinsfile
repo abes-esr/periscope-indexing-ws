@@ -355,7 +355,7 @@ node {
                             }
                          ]
                         }"""
-                        echo $downloadSpec
+                       
                         artifactoryServer.download spec: downloadSpec
 
                         try {
