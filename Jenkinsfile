@@ -334,7 +334,7 @@ node {
                 //-------------------------------
                 try {
                     // On clean l'espace de travail
-                    //sh("${maventool}/bin/mvn clean")
+                    sh("${maventool}/bin/mvn clean")
                     sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
                     if ("${candidateModules[moduleIndex]}" == 'web') {
@@ -355,7 +355,9 @@ node {
                          ]
                         }"""
 
-                        artifactoryServer.download spec: downloadSpec
+                        buildInfo = artifactoryServer.download spec: downloadSpec
+
+                        echo buildInfo
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
 
@@ -377,7 +379,7 @@ node {
                          ]
                         }"""
 
-                        artifactoryServer.download spec: downloadSpec
+                        buildInfo = artifactoryServer.download spec: downloadSpec
                         sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
                     }
 
