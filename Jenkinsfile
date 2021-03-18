@@ -84,7 +84,7 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    stringParam(defaultValue: '', description: 'Numéro du build à déployer. Retrouvez vos précédent build sur https://artifactory.abes.fr/artifactory/api/build/periscope-indexing', name: 'BUILD_NUMBER'),
+                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/api/build/${artifactoryBuildName}", name: 'BUILD_NUMBER'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -329,6 +329,8 @@ node {
 
             if(buildNumber != -1) {
 
+                sh("ls -l")
+
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
                     def downloadSpec = """{                    
@@ -337,7 +339,7 @@ node {
                           "build": "${artifactoryBuildName}/${buildNumber}",
                           "pattern": "*.war",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
-                          "flat" : true
+                          "flat" : false
                         }
                      ]
                     }"""
@@ -353,7 +355,7 @@ node {
                           "build": "${artifactoryBuildName}/${buildNumber}",
                           "pattern": "*.jar",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
-                          "flat" : true
+                          "flat" : false
                         }
                      ]
                     }"""
