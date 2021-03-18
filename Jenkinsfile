@@ -354,12 +354,7 @@ node {
                          ]
                         }"""
 
-                        buildInfo = artifactoryServer.download spec: downloadSpec
-                        echo(buildInfo.toString())
-                        if (buildInfo.getArtifacts().size() == 0) {
-                            throw new Exception("Unable to find the build")
-                        }
-
+                        artifactoryServer.download spec: downloadSpec 
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
 
@@ -381,11 +376,7 @@ node {
                          ]
                         }"""
 
-                        buildInfo = artifactoryServer.download spec: downloadSpec
-                        if (buildInfo.getArtifacts().size() == 0) {
-                            throw new Exception("Unable to retrieve the jar from Artifactory")
-                        }
-
+                        artifactoryServer.download spec: downloadSpec
                         sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
                     }
 
