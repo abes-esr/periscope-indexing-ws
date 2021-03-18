@@ -300,7 +300,7 @@ node {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
 
-                    rtMaven.deployer.addProperty("spring.profiles.active","${mavenProfil}").addProperty("finalName", "${applicationFinalName}").addProperty("webBaseDir", "${backTargetDir}${applicationFinalName}").addProperty("batchBaseDir", "${batchTargetDir}${applicationFinalName}")
+                    rtMaven.deployer.addProperty("spring.profiles.active","${mavenProfil}".toString()).addProperty("finalName", "${applicationFinalName}".toString()).addProperty("webBaseDir", "${backTargetDir}${applicationFinalName}".toString()).addProperty("batchBaseDir", "${batchTargetDir}${applicationFinalName}".toString())
                     rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true"
 
                     // On deploie
