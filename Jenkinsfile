@@ -58,6 +58,8 @@ node {
         choiceParams.add("[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build")
     }
 
+    currentBuild.description = " Retrouver lemy new description"
+
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
     // On scanne les branches et les tags du Git
@@ -82,7 +84,7 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    stringParam(defaultValue: '', description: 'Numéro du build à déployer', name: 'buildNumber'),
+                    stringParam(defaultValue: '', description: 'Numéro du build à déployer. Retrouvez vos précédent build sur https://artifactory.abes.fr/artifactory/api/build/periscope-indexing', name: 'BUILD_NUMBER'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -128,7 +130,7 @@ node {
                     executeDeploy.add(false)
                 } else if (params.ACTION == "Déployer depuis un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build") {
 
-                    if (params.buildNumber == null || params.buildNumber == -1) {
+                    if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
                         throw new Exception("No build number specified")
                     }
                     // On verifie si le build exists
@@ -333,6 +335,7 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
+                          "pattern": "*.war",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
                           "flat" : true
                         }
@@ -347,7 +350,8 @@ node {
                     def downloadSpec = """{                     
                      "files": [
                       {
-                          "build": "${artifactoryBuildName}/${buildNumber}",                        
+                          "build": "${artifactoryBuildName}/${buildNumber}",
+                          "pattern": "*.jar",
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
                           "flat" : true
                         }
