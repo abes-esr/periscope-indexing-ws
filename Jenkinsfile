@@ -102,6 +102,7 @@ node {
             // Maven & Artifactory
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
+            buildInfo = Artifactory.newBuildInfo()
             artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
             rtMaven.opts = "-Xms1024m -Xmx4096m"
@@ -284,7 +285,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
                     sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
-                    // rtMaven.run ne tient pas compte des arguments de compilation
+                    // ATTENTION, rtMaven.run ne tient pas compte des arguments de compilation
                     //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${applicationFinalName} -DwebBaseDir=${backTargetDir}${applicationFinalName} -DbatchBaseDir=${batchTargetDir}${applicationFinalName}".toString()
 
                 } catch (e) {
