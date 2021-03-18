@@ -56,7 +56,7 @@ node {
     for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
         choiceParams.add("[${modulesNames[moduleIndex]}] Compiler le module")
         choiceParams.add("[${modulesNames[moduleIndex]}] Compiler & Déployer le module")
-        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer depuis un précédent build")
     }
 
     currentBuild.description = " Retrouver lemy new description"
@@ -349,7 +349,6 @@ node {
                         artifactoryServer.download spec: downloadSpec
 
                         try {
-                            sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
                             sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                         } catch (e) {
                             // On essaie sur le repo des releases
@@ -364,24 +363,41 @@ node {
                              ]
                             }"""
                             artifactoryServer.download spec: downloadSpec
-
-                            sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
                             sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                         }
                     }
 
                     if ("${candidateModules[moduleIndex]}" == 'batch') {
 
-                        downloadSpec = """{                     
+                        downloadSpec = """{                    
                          "files": [
-                          {
+                          {   
                               "build": "${artifactoryBuildName}/${buildNumber}",
-                              "pattern": "*.jar",                          
-                              "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"                         
+                              "pattern": "libs-snapshot-local/*.jar",
+                              "target": "${candidateModules[moduleIndex]}/target/",
+                              "flat": true                      
                             }
                          ]
                         }"""
                         artifactoryServer.download spec: downloadSpec
+
+                        try {
+                            sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
+                        } catch (e) {
+                            // On essaie sur le repo des releases
+                            downloadSpec = """{                    
+                             "files": [
+                              {   
+                                  "build": "${artifactoryBuildName}/${buildNumber}",
+                                  "pattern": "libs-release-local/*.war",
+                                  "target": "${candidateModules[moduleIndex]}/target/",
+                                  "flat": true                      
+                                }
+                             ]
+                            }"""
+                            artifactoryServer.download spec: downloadSpec
+                            sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
+                        }
                     }
 
                 } catch (e) {
