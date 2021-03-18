@@ -334,7 +334,7 @@ node {
                 // Etape 4.0 : On recupere depuis Artifactory
                 //-------------------------------
                 try {
-                    // On clean parce que Jenkins a deja pull de repo
+                    // On clean parce que Jenkins a deja pull le repo
                     sh("${maventool}/bin/mvn clean")
                     sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
@@ -347,7 +347,7 @@ node {
                                     "items.find": {
                                     "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
-                                    "name":{"\$match":"*.war"}
+                                    "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
                                     }                              
                                 },
                               "target": "${candidateModules[moduleIndex]}/target/",
@@ -355,59 +355,31 @@ node {
                             }
                          ]
                         }"""
-                       
-                        artifactoryServer.download spec: downloadSpec
 
-                        try {
-                            sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
-                        } catch (e) {
-                            // On essaie sur le repo des releases
-                            downloadSpec = """{                    
-                             "files": [
-                              {   
-                                  "build": "${artifactoryBuildName}/${buildNumber}",
-                                  "pattern": "libs-release-local/${candidateModules[moduleIndex]}*.war",
-                                  "target": "${candidateModules[moduleIndex]}/target/",
-                                  "flat": true                      
-                                }
-                             ]
-                            }"""
-                            artifactoryServer.download spec: downloadSpec
-                            sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
-                        }
+                        artifactoryServer.download spec: downloadSpec
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
 
                     if ("${candidateModules[moduleIndex]}" == 'batch') {
 
                         downloadSpec = """{                    
                          "files": [
-                          {   
-                              "build": "${artifactoryBuildName}/${buildNumber}",
-                              "pattern": "libs-snapshot-local/${candidateModules[moduleIndex]}*.jar",
+                          {  
+                              "aql": {
+                                    "items.find": {
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
+                                    "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
+                                    }                              
+                                },
                               "target": "${candidateModules[moduleIndex]}/target/",
                               "flat": true                      
                             }
                          ]
                         }"""
-                        artifactoryServer.download spec: downloadSpec
 
-                        try {
-                            sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
-                        } catch (e) {
-                            // On essaie sur le repo des releases
-                            downloadSpec = """{                    
-                             "files": [
-                              {   
-                                  "build": "${artifactoryBuildName}/${buildNumber}",
-                                  "pattern": "libs-release-local/${candidateModules[moduleIndex]}*.jar",
-                                  "target": "${candidateModules[moduleIndex]}/target/",
-                                  "flat": true                      
-                                }
-                             ]
-                            }"""
-                            artifactoryServer.download spec: downloadSpec
-                            sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
-                        }
+                        artifactoryServer.download spec: downloadSpec
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.jar ${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar")
                     }
 
                 } catch (e) {
