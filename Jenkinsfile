@@ -335,14 +335,15 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "libs-snapshot-local/*.war",
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
+                          "pattern": "*/*.war",
+                          "target": "${candidateModules[moduleIndex]}/target/",
                           "flat": true                      
                         }
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    //sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
+                    sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+                    sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                 }
 
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
