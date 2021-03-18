@@ -138,7 +138,7 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(false)
                     executeDeploy.add(true)
-                    buildNumber = params.buildNumber
+                    buildNumber = params.BUILD_NUMBER
                 }
             }
 
@@ -336,7 +336,8 @@ node {
                     def downloadSpec = """{                    
                      "files": [
                       {   
-                          "build": "${artifactoryBuildName}/${buildNumber}",             
+                          "build": "${artifactoryBuildName}/${buildNumber}",  
+                          "pattern": "*.war",           
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"                          
                         }
                      ]
@@ -350,7 +351,8 @@ node {
                     def downloadSpec = """{                     
                      "files": [
                       {
-                          "build": "${artifactoryBuildName}/${buildNumber}"                         
+                          "build": "${artifactoryBuildName}/${buildNumber}",
+                          "pattern": "*.jar",                          
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"                         
                         }
                      ]
