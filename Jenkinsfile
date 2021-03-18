@@ -49,6 +49,7 @@ node {
     def rtMaven
     def mavenProfil
     def artifactoryServer
+    def downloadSpec
 
     // Definition des actions
     def choiceParams = ['Compiler', 'Compiler & Déployer', 'Déployer depuis un précédent build']
@@ -329,45 +330,64 @@ node {
 
             if(buildNumber != -1) {
 
-                sh("${maventool}/bin/mvn clean")
-                sh("mkdir -p ${candidateModules[moduleIndex]}/target")
+                try {
+                    sh("${maventool}/bin/mvn clean")
+                    sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
-                if ("${candidateModules[moduleIndex]}" == 'web') {
+                    if ("${candidateModules[moduleIndex]}" == 'web') {
 
-                    def downloadSpec = """{                    
-                     "files": [
-                      {   
-                          "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "generic-local/*.war",
-                          "target": "${candidateModules[moduleIndex]}/target/",
-                          "flat": true                      
+                        downloadSpec = """{                    
+                         "files": [
+                          {   
+                              "build": "${artifactoryBuildName}/${buildNumber}",
+                              "pattern": "libs-snapshot-local/*.war",
+                              "target": "${candidateModules[moduleIndex]}/target/",
+                              "flat": true                      
+                            }
+                         ]
+                        }"""
+                        artifactoryServer.download spec: downloadSpec
+
+                        try {
+                            sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+                            sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
+                        } catch (e) {
+                            // On essaie sur le repo des releases
+                            downloadSpec = """{                    
+                             "files": [
+                              {   
+                                  "build": "${artifactoryBuildName}/${buildNumber}",
+                                  "pattern": "libs-release-local/*.war",
+                                  "target": "${candidateModules[moduleIndex]}/target/",
+                                  "flat": true                      
+                                }
+                             ]
+                            }"""
+                            artifactoryServer.download spec: downloadSpec
+
+                            sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
+                            sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                         }
-                     ]
-                    }"""
-                    artifactoryServer.download spec: downloadSpec
-
-                    try {
-                        sh("ls -ltra ${candidateModules[moduleIndex]}/target/")
-                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
-                    } catch (e) {
-                        currentBuild.result = hudson.model.Result.FAILURE.toString()
-                        notifySlack(slackChannel, "Failed to retrieve module ${candidateModules[moduleIndex]} from Artifactory: " + e.getLocalizedMessage())
-                        throw e
                     }
-                }
 
-                if ("${candidateModules[moduleIndex]}" == 'batch') {
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
 
-                    def downloadSpec = """{                     
-                     "files": [
-                      {
-                          "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "*.jar",                          
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"                         
-                        }
-                     ]
-                    }"""
-                    artifactoryServer.download spec: downloadSpec
+                        downloadSpec = """{                     
+                         "files": [
+                          {
+                              "build": "${artifactoryBuildName}/${buildNumber}",
+                              "pattern": "*.jar",                          
+                              "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"                         
+                            }
+                         ]
+                        }"""
+                        artifactoryServer.download spec: downloadSpec
+                    }
+
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to retrieve module ${candidateModules[moduleIndex]} from Artifactory: " + e.getLocalizedMessage())
+                    throw e
                 }
             }
 
