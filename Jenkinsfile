@@ -336,8 +336,7 @@ node {
                     def downloadSpec = """{                    
                      "files": [
                       {   
-                          "build": "${artifactoryBuildName}/${buildNumber}",  
-                          "pattern": "*.war",           
+                          "build": "${artifactoryBuildName}/${buildNumber}",                             
                           "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"                          
                         }
                      ]
