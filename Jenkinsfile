@@ -329,8 +329,6 @@ node {
 
             if(buildNumber != -1) {
 
-                sh("ls -l")
-
                 if ("${candidateModules[moduleIndex]}" == 'web') {
 
                     def downloadSpec = """{                    
@@ -338,13 +336,13 @@ node {
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",
                           "pattern": "libs-snapshot-local/*.war",
-                          "target": "${candidateModules[moduleIndex]}/target/",
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
                           "flat": true                      
                         }
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    sh("tree")
+                    //sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                 }
 
                 if ("${candidateModules[moduleIndex]}" == 'batch') {
@@ -359,7 +357,6 @@ node {
                      ]
                     }"""
                     artifactoryServer.download spec: downloadSpec
-                    sh("tree")
                 }
             }
 
