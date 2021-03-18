@@ -104,6 +104,7 @@ node {
             rtMaven = Artifactory.newMavenBuild()
             artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
+            rtMaven.opts = "-Xms1024m -Xmx4096m"
 
             // Action a faire
             if (params.ACTION == null) {
@@ -298,14 +299,11 @@ node {
         if ("${executeBuild[moduleIndex]}" == 'true') {
             stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
                 try {
+                    rtMaven.resolver server: artifactoryServer, releaseRepo: 'main', snapshotRepo: 'main'
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                    rtMaven.deployer.addProperty("spring.profiles.active","${mavenProfil}".toString()).addProperty("finalName", "${applicationFinalName}".toString()).addProperty("webBaseDir", "${backTargetDir}${applicationFinalName}".toString()).addProperty("batchBaseDir", "${batchTargetDir}${applicationFinalName}".toString())
-                    rtMaven.opts = "-Xms1024m -Xmx4096m -Dmaven.test.skip=true"
 
-                    buildInfo = Artifactory.newBuildInfo()
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "'clean install -Dmaven.test.skip=true -P${mavenProfil} -DfinalName='${applicationFinalName}' -DwebBaseDir='${backTargetDir}${applicationFinalName}' -DbatchBaseDir='${batchTargetDir}${applicationFinalName}'"
                     buildInfo.name = artifactoryBuildName
-                    buildInfo.env.capture = true
-                    rtMaven.run pom: 'pom.xml', goals: "-U clean install", buildInfo: buildInfo
                     rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
 
