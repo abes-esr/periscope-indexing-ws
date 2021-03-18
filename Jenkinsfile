@@ -22,7 +22,7 @@ node {
     def gitURL = "https://github.com/abes-esr/periscope-indexing-ws.git"
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
-    def applicationBuildName = "periscope-indexing"
+    def artifactoryBuildName = "periscope-indexing"
     def modulesNames = ["web", "batch"]
 
     // Definition du module web
@@ -84,7 +84,7 @@ node {
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/api/build/${applicationBuildName}", name: 'BUILD_NUMBER'),
+                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/webapp/#/builds/${artifactoryBuildName}", name: 'BUILD_NUMBER'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -284,7 +284,7 @@ node {
             stage("[${candidateModules[moduleIndex]}] Compile package") {
                 try {
                     sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DwarName='${backApplicationFileName}' -DwebBaseDir='${backTargetDir}${backApplicationFileName}' -DbatchBaseDir='${batchTargetDir}${backApplicationFileName}'"
-                    // ATTENTION, rtMaven.run ne tient pas compte des arguments de compilation
+                    // ATTENTION, rtMaven.run ne tient pas compte des arguments de compilation -D
                     //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
 
                 } catch (e) {
@@ -304,7 +304,7 @@ node {
                 try {
                     rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                     buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -P${mavenProfil} -DwarName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
-                    buildInfo.name = "${applicationBuildName}"
+                    buildInfo.name = "${artifactoryBuildName}"
                     rtMaven.deployer.deployArtifacts buildInfo
                     artifactoryServer.publishBuildInfo buildInfo
 
@@ -338,7 +338,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
                                     }                              
@@ -360,7 +360,7 @@ node {
                           {  
                               "aql": {
                                     "items.find": {
-                                    "archive.item.artifact.module.build.name": {"\$eq":"${applicationBuildName}"},
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
                                     }                              
