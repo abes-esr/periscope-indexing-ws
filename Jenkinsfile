@@ -357,7 +357,8 @@ node {
 
                         buildInfo = artifactoryServer.download spec: downloadSpec
 
-                        echo buildInfo
+                        echo("${buildInfo.buildNumber}")
+
                         sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${applicationFinalName}.war")
                     }
 
