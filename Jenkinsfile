@@ -129,7 +129,7 @@ node {
                     candidateModules.add("${modulesNames[moduleIndex]}")
                     executeBuild.add(true)
                     executeDeploy.add(false)
-                } else if (params.ACTION == "Déployer depuis un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer le module depuis un précédent build") {
+                } else if (params.ACTION == "Déployer depuis un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer depuis un précédent build") {
 
                     if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
                         throw new Exception("No build number specified")
