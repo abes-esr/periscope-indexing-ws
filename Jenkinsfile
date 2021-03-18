@@ -337,8 +337,7 @@ node {
                      "files": [
                       {   
                           "build": "${artifactoryBuildName}/${buildNumber}",             
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war",
-                          "flat" : true
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.war"                          
                         }
                      ]
                     }"""
@@ -351,10 +350,8 @@ node {
                     def downloadSpec = """{                     
                      "files": [
                       {
-                          "build": "${artifactoryBuildName}/${buildNumber}",
-                          "pattern": "${artifactoryBuildName}/*.jar",
-                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar",
-                          "flat" : false
+                          "build": "${artifactoryBuildName}/${buildNumber}"                         
+                          "target": "${candidateModules[moduleIndex]}/target/${applicationFinalName}.jar"                         
                         }
                      ]
                     }"""
