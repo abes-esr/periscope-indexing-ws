@@ -119,6 +119,7 @@ public class BatchConfiguration {
         parameters.put("minValue", minValue);
         parameters.put("maxValue", maxValue);
         reader.setParameterValues(parameters);
+        reader.setPageSize(chunkSize);
         reader.setRowMapper(new NoticesBibioMapper());
         reader.setSaveState(true);
         return reader;

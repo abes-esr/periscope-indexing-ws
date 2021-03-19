@@ -1,5 +1,7 @@
 package fr.abes.periscope.processor;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.entity.solr.NoticeSolrExtended;
@@ -29,13 +31,17 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
 
     @Override
     public NoticeSolrExtended process(NoticesBibio notice) throws Exception {
-        log.debug("Processing " + threadName + " : notice n°" + notice.getId());
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-        XmlMapper xmlMapper = new XmlMapper(module);
-        NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml(), NoticeXml.class);
-        if (service.isRessourceContinue(noticeXml)) {
-            return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
+        //log.debug("Processing " + threadName + " : notice n°" + notice.getId());
+        try {
+            JacksonXmlModule module = new JacksonXmlModule();
+            module.setDefaultUseWrapper(false);
+            XmlMapper xmlMapper = new XmlMapper(module);
+            NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml(), NoticeXml.class);
+            if (service.isRessourceContinue(noticeXml)) {
+                return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
+            }
+        }catch (Exception ex) {
+            log.error("Erreur dans la conversion JSON notice n° : " + notice.getId() + " Exception " + ex.getClass().getName());
         }
         return null;
     }

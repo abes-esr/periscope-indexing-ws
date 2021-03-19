@@ -69,7 +69,6 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
         if (this.fetchSize != -1) {
             jdbcTemplate.setFetchSize(this.fetchSize);
         }
-
         jdbcTemplate.setMaxRows(this.getPageSize());
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         Assert.notNull(this.queryProvider, "QueryProvider may not be null");
@@ -78,8 +77,8 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
         this.remainingPagesSql = this.queryProvider.generateRemainingPagesQuery(this.fetchSize);
     }
 
-    @TrackExecutionTime
     protected void doReadPage() {
+        long startTime = System.currentTimeMillis();
         if (this.results == null) {
             this.results = new CopyOnWriteArrayList();
         } else {
@@ -98,13 +97,17 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
             }
         } else {
             this.previousStartAfterValues = this.startAfterValues;
-            Integer index = this.getPage() * this.fetchSize;
-            String jumpToQuery = this.queryProvider.generateJumpToItemQuery(index, this.fetchSize);
+            Integer minValue = (Integer)this.parameterValues.get("minValue");
+            minValue += this.fetchSize;
+            this.parameterValues.put("minValue", minValue);
+            String jumpToQuery = this.queryProvider.generateJumpToItemQuery(0, this.fetchSize);
             log.debug("SQL used for reading remaining pages: [" + jumpToQuery + "]");
             query = this.namedParameterJdbcTemplate.query(jumpToQuery, this.getParameterMap(this.parameterValues, this.startAfterValues), rowCallback);
         }
 
         this.results.addAll(query);
+        long endTime = System.currentTimeMillis();
+        log.info("Traitement requête : " + (endTime - startTime) + "ms");
     }
 
     public void update(ExecutionContext executionContext) throws ItemStreamException {

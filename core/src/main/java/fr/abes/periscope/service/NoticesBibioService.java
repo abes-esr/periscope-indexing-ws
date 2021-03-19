@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
 
 
 @Data
@@ -34,10 +32,4 @@ public class NoticesBibioService {
         return repository.findMinId();
     }
 
-    public List<NoticesBibio> findByIdBetween(Integer min, Integer max) {
-        Query query = baseXmlEntityManager.createNamedQuery("findByIdBetween");
-        query.setParameter("minValue", min);
-        query.setParameter("maxValue", max);
-        return query.getResultList();
-    }
 }

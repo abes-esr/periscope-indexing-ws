@@ -27,11 +27,8 @@ public class NoticeQueryProvider extends OraclePagingQueryProvider {
 
     @Override
     public String generateJumpToItemQuery(int index, int pageSize) {
-        int page = index / pageSize;
-        int offset = page * pageSize;
-        offset = (offset == 0) ? 1 : offset;
         String query = createQuery();
-        query += " OFFSET " + offset + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
+        query += " OFFSET " + index + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
         return query;
     }
 

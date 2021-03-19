@@ -13,6 +13,7 @@ public class BatchApplication {
 		SpringApplication.run(BatchApplication.class, args);
 		long endTime = System.currentTimeMillis();
 		log.debug("Timing " + (endTime-startTime) +" ms");
+		System.exit(0);
 	}
 
 }
