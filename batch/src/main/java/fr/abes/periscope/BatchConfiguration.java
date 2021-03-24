@@ -7,6 +7,7 @@ import fr.abes.periscope.entity.solr.NoticeSolrExtended;
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.processor.SolrItemWriter;
 import fr.abes.periscope.service.FooService;
+import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.service.NoticesBibioService;
 import fr.abes.periscope.util.NoticesBibioMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,10 @@ public class BatchConfiguration {
     private int gridSize =8;
     @Value("${chunkSize}")
     private int chunkSize =10;
+    @Value("${minValue}")
+    private int minValue;
+    @Value("${maxValue}")
+    private int maxValue;
 
     @Autowired
     private JobBuilderFactory jobs;
@@ -48,7 +53,7 @@ public class BatchConfiguration {
     @Autowired
     private NoticesBibioService noticesBibioService;
     @Autowired
-    private FooService fooService;
+    private NoticeStoreService noticeStoreService;
 
     long startTime;
     long endTime;
@@ -98,7 +103,7 @@ public class BatchConfiguration {
 
     @Bean
     public RangePartitioner rangePartitioner() {
-        return new RangePartitioner(noticesBibioService);
+        return new RangePartitioner(noticesBibioService, minValue, maxValue);
     }
 
     @Bean
@@ -137,12 +142,12 @@ public class BatchConfiguration {
     @Bean
     @StepScope
     public SolrItemWriter slaveWriter() {
-        return new SolrItemWriter(fooService);
+        return new SolrItemWriter(noticeStoreService);
     }
 
     private NoticeQueryProvider queryProvider() throws Exception {
         NoticeQueryProvider provider = new NoticeQueryProvider();
-        provider.setSelectClause("id, NVL2(data_xml, (data_xml).getClobVal(), NULL) as data_xml");
+        provider.setSelectClause("id, XMLSERIALIZE (CONTENT data_xml as CLOB) as data_xml");
         provider.setFromClause("autorites.noticesbibio");
         provider.setWhereClause("id >= :minValue and id < :maxValue");
         Map<String, Order> sortKeys = new HashMap<>();

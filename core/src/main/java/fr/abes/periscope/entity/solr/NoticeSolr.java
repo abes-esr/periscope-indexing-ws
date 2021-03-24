@@ -26,8 +26,8 @@ public class NoticeSolr implements Serializable {
     @Indexed(name = NoticeField.ID, type = NoticeField.ID_TYPE)
     protected String id;
 
-    @Field(NoticeField.TYPE)
-    @Indexed(name = NoticeField.TYPE, type = NoticeField.TYPE_TYPE)
+    @Field(NoticeField.TITLE_TYPE)
+    @Indexed(name = NoticeField.TITLE_TYPE, type = NoticeField.TITLE_TYPE_TYPE)
     private String type = "notice";
 
     @Field(NoticeField.PPN)

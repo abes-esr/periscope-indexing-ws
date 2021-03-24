@@ -107,7 +107,7 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
 
         this.results.addAll(query);
         long endTime = System.currentTimeMillis();
-        log.info("Traitement requête : " + (endTime - startTime) + "ms");
+        log.debug("Traitement requête : " + (endTime - startTime) + "ms");
     }
 
     public void update(ExecutionContext executionContext) throws ItemStreamException {

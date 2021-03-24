@@ -32,10 +32,9 @@ public class NoticeMapperTest {
      */
     @Test
     @DisplayName("Titre mort")
-    @Disabled
     public void testDeadTitle() throws IOException {
 
-        File file = new File("/work/developpement/projects/periscope/documents/base_xml/13282261X.xml");
+        File file = new File("/Users/maraval/Documents/Periscope/notice.xml");
         String xml = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
 
         JacksonXmlModule module = new JacksonXmlModule();
@@ -43,7 +42,7 @@ public class NoticeMapperTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
-        String expectedPpn = "13282261X";
+        String expectedPpn = "000014567";
         String expectedIssn = "21001456";
 
         NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);

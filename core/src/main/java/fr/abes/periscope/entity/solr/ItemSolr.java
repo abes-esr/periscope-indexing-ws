@@ -1,7 +1,7 @@
 package fr.abes.periscope.entity.solr;
 
 import fr.abes.periscope.repository.solr.NoticeField;
-import fr.abes.periscope.repository.solr.SpecimenField;
+import fr.abes.periscope.repository.solr.ItemField;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.solr.client.solrj.beans.Field;
@@ -12,30 +12,30 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 @Getter
 @Setter
 @SolrDocument
-public class SpecimenSolr {
+public class ItemSolr {
 
     @Id
-    @Field(SpecimenField.ID)
-    @Indexed(name = SpecimenField.ID, type = SpecimenField.ID_TYPE)
+    @Field(ItemField.ID)
+    @Indexed(name = ItemField.ID, type = ItemField.ID_TYPE)
     private String id;
 
-    @Field(SpecimenField.EPN)
-    @Indexed(name = SpecimenField.EPN, type = SpecimenField.EPN_TYPE)
+    @Field(ItemField.EPN)
+    @Indexed(name = ItemField.EPN, type = ItemField.EPN_TYPE)
     private String epn;
 
     @Field(NoticeField.PPN)
     @Indexed(name = NoticeField.PPN, type = NoticeField.PPN_TYPE)
     private String ppn;
 
-    @Field(NoticeField.TYPE)
-    @Indexed(name = NoticeField.TYPE, type = NoticeField.TYPE_TYPE)
+    @Field(NoticeField.TITLE_TYPE)
+    @Indexed(name = NoticeField.TITLE_TYPE, type = NoticeField.TITLE_TYPE_TYPE)
     private String type = "exemplaire";
 
-    @Field(SpecimenField.RCR)
-    @Indexed(name = SpecimenField.RCR, type = SpecimenField.RCR_TYPE)
+    @Field(ItemField.RCR)
+    @Indexed(name = ItemField.RCR, type = ItemField.RCR_TYPE)
     private String rcr;
 
-    public SpecimenSolr(String ppn, String epn) {
+    public ItemSolr(String ppn, String epn) {
         this.id = epn;
         this.epn = epn;
 
@@ -56,7 +56,7 @@ public class SpecimenSolr {
             return false;
         }
 
-        return this.id != null && id.equals(((SpecimenSolr) obj).id);
+        return this.id != null && id.equals(((ItemSolr) obj).id);
     }
 
     @Override

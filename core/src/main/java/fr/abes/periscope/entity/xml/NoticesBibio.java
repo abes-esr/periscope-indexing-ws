@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Clob;
 
 @Entity
 @NoArgsConstructor
@@ -18,9 +19,9 @@ public class NoticesBibio implements Serializable {
     @Column(name = "ID")
     private Integer id;
 
-    @ColumnTransformer(read = "NVL2(DATA_XML, (DATA_XML).getClobVal(), NULL)", write = "NULLSAFE_XMLTYPE(?)")
-    @Lob
     @Column(name = "DATA_XML")
-    private String dataXml;
+    @Lob
+    //Type Clob pour pouvoir récupérer les notices de plus de 4000 caractères
+    private Clob dataXml;
 
 }

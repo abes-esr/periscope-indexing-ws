@@ -20,8 +20,8 @@ public interface NoticeField {
     String ID = "id";
     String ID_TYPE = "string";
 
-    String TYPE = "type";
-    String TYPE_TYPE = "string";
+    String TITLE_TYPE = "type-notice";
+    String TITLE_TYPE_TYPE = "string";
 
     String PPN = "001";
     String PPN_TYPE = "string";
@@ -50,10 +50,10 @@ public interface NoticeField {
     String ZONE_001 = "001";
     String ZONE_001_TYPE = "string";
 
-    String ZONE_002 = "002_s";
+    String ZONE_002 = "002";
     String ZONE_002_TYPE = "string";
 
-    String ZONE_003 = "003_s";
+    String ZONE_003 = "003";
     String ZONE_003_TYPE = "string";
 
     String ZONE_004 = "004";

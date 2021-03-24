@@ -36,12 +36,12 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
             JacksonXmlModule module = new JacksonXmlModule();
             module.setDefaultUseWrapper(false);
             XmlMapper xmlMapper = new XmlMapper(module);
-            NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml(), NoticeXml.class);
-            if (service.isRessourceContinue(noticeXml)) {
+            NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml().getCharacterStream(), NoticeXml.class);
+            //if (service.isRessourceContinue(noticeXml)) {
                 return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
-            }
+            //}
         }catch (Exception ex) {
-            log.error("Erreur dans la conversion JSON notice n° : " + notice.getId() + " Exception " + ex.getClass().getName());
+            log.error("Erreur dans la conversion JSON notice n° : " + notice.getId() + " Exception " + ex.getClass().getName() + " : " + ex.getMessage());
         }
         return null;
     }

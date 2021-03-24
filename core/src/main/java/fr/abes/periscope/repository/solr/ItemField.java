@@ -3,7 +3,7 @@ package fr.abes.periscope.repository.solr;
 /**
  * Représente les champs SolR pour un Exemplaire SolR
  */
-public interface SpecimenField {
+public interface ItemField {
 
     String ID = "id";
     String ID_TYPE = "string";

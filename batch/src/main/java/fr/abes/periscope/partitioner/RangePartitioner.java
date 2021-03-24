@@ -11,15 +11,19 @@ import java.util.Map;
 public class RangePartitioner implements Partitioner {
 
     private NoticesBibioService service;
+    Integer minValue;
+    Integer maxValue;
 
-    public RangePartitioner(NoticesBibioService service) {
+    public RangePartitioner(NoticesBibioService service, Integer minValue, Integer maxValue) {
+        this.minValue = minValue;
+        this.maxValue = maxValue;
         this.service = service;
     }
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
-        Integer min = service.getMinId();
-        Integer max = service.getMaxId();
+        Integer min = (minValue != 0) ? this.minValue: service.getMinId() ;
+        Integer max = (maxValue != 0) ? this.maxValue : service.getMaxId();
 
         int targetSize = (max - min) / gridSize + 1;
 

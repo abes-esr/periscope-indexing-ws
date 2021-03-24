@@ -11,7 +11,7 @@ public class NoticesBibioMapper implements RowMapper<NoticesBibio> {
     public NoticesBibio mapRow(ResultSet resultSet, int i) throws SQLException {
         NoticesBibio notice = new NoticesBibio();
         notice.setId(resultSet.getInt("id"));
-        notice.setDataXml(resultSet.getString("data_xml"));
+        notice.setDataXml(resultSet.getClob("data_xml"));
         return notice;
     }
 }

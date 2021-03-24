@@ -1,7 +1,7 @@
 package fr.abes.periscope.util;
 
 import fr.abes.periscope.entity.solr.NoticeSolrExtended;
-import fr.abes.periscope.entity.solr.SpecimenSolr;
+import fr.abes.periscope.entity.solr.ItemSolr;
 import fr.abes.periscope.entity.xml.DataField;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.entity.xml.SubField;
@@ -146,11 +146,11 @@ public class NoticeMapper {
                             String epn = specimenIdField.getValue().split(":")[1];
 
                             // On récupère l'exemplaire ou on le crée s'il n'existe pas
-                            SpecimenSolr specimen = target.getSpecimens().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
+                            ItemSolr specimen = target.getSpecimens().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
                                         .findAny().orElse(null);
 
                             if (specimen == null) {
-                                specimen = new SpecimenSolr(target.getPpn(),epn);
+                                specimen = new ItemSolr(target.getPpn(),epn);
                                 target.addSpecimen(specimen);
                             }
 

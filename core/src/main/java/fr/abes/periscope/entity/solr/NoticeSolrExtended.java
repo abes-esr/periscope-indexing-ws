@@ -16,9 +16,9 @@ import java.util.Set;
 public class NoticeSolrExtended extends NoticeSolr {
 
     @ChildDocument
-    protected Set<SpecimenSolr> specimens = new HashSet<>();
+    protected Set<ItemSolr> specimens = new HashSet<>();
 
-    public void addSpecimen(SpecimenSolr specimen) {
+    public void addSpecimen(ItemSolr specimen) {
         this.specimens.add(specimen);
     }
 
