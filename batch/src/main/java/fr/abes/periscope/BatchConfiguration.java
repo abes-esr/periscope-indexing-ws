@@ -35,9 +35,9 @@ import java.util.Map;
 @EnableBatchProcessing
 public class BatchConfiguration {
     @Value("${gridSize}")
-    private int gridSize =8;
+    private int gridSize;
     @Value("${chunkSize}")
-    private int chunkSize =10;
+    private int chunkSize;
     @Value("${minValue}")
     private int minValue;
     @Value("${maxValue}")

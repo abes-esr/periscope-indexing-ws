@@ -88,9 +88,9 @@ public class NoticeSolr implements Serializable {
     @Indexed(name = NoticeField.KEY_TITLE_QUALIFIER, type = NoticeField.KEY_TITLE_QUALIFIER_TYPE)
     protected String keyTitleQualifer;
 
-    @Field(NoticeField.CONTINIOUS_TYPE)
-    @Indexed(name = NoticeField.CONTINIOUS_TYPE, type = NoticeField.CONTINIOUS_TYPE_TYPE)
-    protected String continiousType;
+    @Field(NoticeField.TYPE_DOCUMENT)
+    @Indexed(name = NoticeField.TYPE_DOCUMENT, type = NoticeField.TYPE_DOCUMENT_TYPE)
+    protected String typeDocument;
 
     @Field(NoticeField.EXTERNAL_URLS)
     @Indexed(name = NoticeField.EXTERNAL_URLS, type = NoticeField.EXTERNAL_URLS_TYPE)

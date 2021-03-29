@@ -78,36 +78,36 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
     }
 
     protected void doReadPage() {
-        long startTime = System.currentTimeMillis();
-        if (this.results == null) {
-            this.results = new CopyOnWriteArrayList();
-        } else {
-            this.results.clear();
-        }
-
-        PagingRowMapper rowCallback = new PagingRowMapper();
-        List query;
-        if (this.getPage() == 0) {
-            log.debug("SQL used for reading first page: [" + this.firstPageSql + "]");
-
-            if (this.parameterValues != null && this.parameterValues.size() > 0) {
-                query = this.namedParameterJdbcTemplate.query(this.firstPageSql, this.getParameterMap(this.parameterValues, (Map) null), rowCallback);
+            long startTime = System.currentTimeMillis();
+            if (this.results == null) {
+                this.results = new CopyOnWriteArrayList();
             } else {
-                query = this.getJdbcTemplate().query(this.firstPageSql, rowCallback);
+                this.results.clear();
             }
-        } else {
-            this.previousStartAfterValues = this.startAfterValues;
-            Integer minValue = (Integer)this.parameterValues.get("minValue");
-            minValue += this.fetchSize;
-            this.parameterValues.put("minValue", minValue);
-            String jumpToQuery = this.queryProvider.generateJumpToItemQuery(0, this.fetchSize);
-            log.debug("SQL used for reading remaining pages: [" + jumpToQuery + "]");
-            query = this.namedParameterJdbcTemplate.query(jumpToQuery, this.getParameterMap(this.parameterValues, this.startAfterValues), rowCallback);
-        }
 
-        this.results.addAll(query);
-        long endTime = System.currentTimeMillis();
-        log.debug("Traitement requête : " + (endTime - startTime) + "ms");
+            PagingRowMapper rowCallback = new PagingRowMapper();
+            List query;
+            if (this.getPage() == 0) {
+                log.debug("SQL used for reading first page: [" + this.firstPageSql + "]");
+
+                if (this.parameterValues != null && this.parameterValues.size() > 0) {
+                    query = this.namedParameterJdbcTemplate.query(this.firstPageSql, this.getParameterMap(this.parameterValues, (Map) null), rowCallback);
+                } else {
+                    query = this.getJdbcTemplate().query(this.firstPageSql, rowCallback);
+                }
+            } else {
+                this.previousStartAfterValues = this.startAfterValues;
+                Integer minValue = (Integer)this.parameterValues.get("minValue");
+                minValue += this.fetchSize;
+                this.parameterValues.put("minValue", minValue);
+                String jumpToQuery = this.queryProvider.generateJumpToItemQuery(0, this.fetchSize);
+                log.debug("SQL used for reading remaining pages: [" + jumpToQuery + "]");
+                query = this.namedParameterJdbcTemplate.query(jumpToQuery, this.getParameterMap(this.parameterValues, this.startAfterValues), rowCallback);
+            }
+
+            this.results.addAll(query);
+            long endTime = System.currentTimeMillis();
+            log.debug("Traitement requête : " + (endTime - startTime) + "ms");
     }
 
     public void update(ExecutionContext executionContext) throws ItemStreamException {

@@ -1,6 +1,5 @@
 package fr.abes.periscope;
 
-import fr.abes.periscope.util.TrackExecutionTime;
 import lombok.Setter;
 import org.springframework.batch.item.database.support.OraclePagingQueryProvider;
 import org.springframework.stereotype.Component;

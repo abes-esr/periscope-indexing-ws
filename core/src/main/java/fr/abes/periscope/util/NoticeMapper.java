@@ -132,6 +132,16 @@ public class NoticeMapper {
 
                         }
 
+                        if (dataField.getTag().equalsIgnoreCase("110")) {
+                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
+                            while (subFieldIterator.hasNext()) {
+                                SubField subField = subFieldIterator.next();
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.setTypeDocument(subField.getValue().substring(0, 1));
+                                }
+                            }
+                        }
+
                         // Zone 9XX
                         if (dataField.getTag().startsWith("9")) {
 
@@ -146,12 +156,11 @@ public class NoticeMapper {
                             String epn = specimenIdField.getValue().split(":")[1];
 
                             // On récupère l'exemplaire ou on le crée s'il n'existe pas
-                            ItemSolr specimen = target.getSpecimens().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
-                                        .findAny().orElse(null);
+                            ItemSolr itemSolr = target.getItemSolrs().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
+                                    .findAny().orElse(null);
 
-                            if (specimen == null) {
-                                specimen = new ItemSolr(target.getPpn(),epn);
-                                target.addSpecimen(specimen);
+                            if (itemSolr == null) {
+                                itemSolr = new ItemSolr(target.getPpn(),epn);
                             }
 
                             // On itère sur les autres sous-zone
@@ -159,10 +168,16 @@ public class NoticeMapper {
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
 
-                                if (dataField.getTag().equalsIgnoreCase("930") && subField.getCode().equalsIgnoreCase("b")) {
-                                        specimen.setRcr(subField.getValue());
+                                if (dataField.getTag().equalsIgnoreCase("930")) {
+                                    if (subField.getCode().equalsIgnoreCase("b")) {
+                                        itemSolr.setRcr(subField.getValue());
+                                    }
+                                    if (subField.getCode().equalsIgnoreCase("z")) {
+                                        itemSolr.getPcp().add(subField.getValue());
+                                    }
                                 }
                             }
+                            target.addItem(itemSolr);
                         }
                     }
 

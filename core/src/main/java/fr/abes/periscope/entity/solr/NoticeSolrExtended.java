@@ -16,10 +16,10 @@ import java.util.Set;
 public class NoticeSolrExtended extends NoticeSolr {
 
     @ChildDocument
-    protected Set<ItemSolr> specimens = new HashSet<>();
+    protected Set<ItemSolr> itemSolrs = new HashSet<>();
 
-    public void addSpecimen(ItemSolr specimen) {
-        this.specimens.add(specimen);
+    public void addItem(ItemSolr specimen) {
+        this.itemSolrs.add(specimen);
     }
 
     @Override
@@ -46,6 +46,6 @@ public class NoticeSolrExtended extends NoticeSolr {
 
     @Override
     public String toString() {
-        return "NoticeSolrExtended {"+ "ppn="+ ppn+", issn="+issn+" , specimens="+specimens+"}";
+        return "NoticeSolrExtended {"+ "ppn="+ ppn+", issn="+issn+" , specimens="+ itemSolrs +"}";
     }
 }

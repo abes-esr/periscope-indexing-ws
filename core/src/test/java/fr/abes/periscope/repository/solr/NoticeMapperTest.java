@@ -32,6 +32,7 @@ public class NoticeMapperTest {
      */
     @Test
     @DisplayName("Titre mort")
+    @Disabled
     public void testDeadTitle() throws IOException {
 
         File file = new File("/Users/maraval/Documents/Periscope/notice.xml");

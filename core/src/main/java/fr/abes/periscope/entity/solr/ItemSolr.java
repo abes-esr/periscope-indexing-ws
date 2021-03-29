@@ -4,10 +4,13 @@ import fr.abes.periscope.repository.solr.NoticeField;
 import fr.abes.periscope.repository.solr.ItemField;
 import lombok.Getter;
 import lombok.Setter;
+import net.sf.saxon.om.Item;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +37,10 @@ public class ItemSolr {
     @Field(ItemField.RCR)
     @Indexed(name = ItemField.RCR, type = ItemField.RCR_TYPE)
     private String rcr;
+
+    @Field(ItemField.PCP)
+    @Indexed(name = ItemField.PCP, type = ItemField.PCP_TYPE)
+    private List<String> pcp;
 
     public ItemSolr(String ppn, String epn) {
         this.id = epn;

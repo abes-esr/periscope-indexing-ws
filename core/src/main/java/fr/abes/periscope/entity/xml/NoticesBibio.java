@@ -20,6 +20,7 @@ public class NoticesBibio implements Serializable {
     private Integer id;
 
     @Column(name = "DATA_XML")
+    @ColumnTransformer(read = "XMLSERIALIZE (CONTENT data_xml as CLOB)", write = "NULLSAFE_XMLTYPE(?)")
     @Lob
     //Type Clob pour pouvoir récupérer les notices de plus de 4000 caractères
     private Clob dataXml;

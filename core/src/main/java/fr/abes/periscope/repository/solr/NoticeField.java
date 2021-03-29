@@ -132,9 +132,9 @@ public interface NoticeField {
     //--------------------------------
 
     //--------------------------------
-    // Zone 110
-    String CONTINIOUS_TYPE = "110-a";
-    String CONTINIOUS_TYPE_TYPE = "string";
+    // Type de document
+    String TYPE_DOCUMENT = "typeDocument";
+    String TYPE_DOCUMENT_TYPE = "string";
     //--------------------------------
 
     //--------------------------------

@@ -1,6 +1,8 @@
 package fr.abes.periscope.processor;
 
 import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.repository.solr.NoticeField;
+import fr.abes.periscope.service.FooService;
 import fr.abes.periscope.service.NoticeStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemStreamWriter;

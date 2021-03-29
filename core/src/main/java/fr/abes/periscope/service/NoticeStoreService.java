@@ -49,8 +49,7 @@ public class NoticeStoreService {
         } catch (DataAccessResourceFailureException ex) {
             log.error("Erreur d'indexation notice : " + ex.getMessage());
         }
-            return null;
-
+        return null;
     }
 
     public void deleteList(List<NoticeSolrExtended> notice) {
