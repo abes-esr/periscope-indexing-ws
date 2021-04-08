@@ -91,10 +91,34 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.NB_LOC)
     protected Integer nbLocation;
 
-    protected boolean toDelete;
+    @Field(NoticeSolrField.LANGUAGE)
+    @Indexed(name = NoticeSolrField.LANGUAGE)
+    protected String language;
+
+    @Field(NoticeSolrField.COUNTRY)
+    @Indexed(name = NoticeSolrField.COUNTRY)
+    protected String country;
+
+    @Field(NoticeSolrField.START_YEAR)
+    @Indexed(name = NoticeSolrField.START_YEAR)
+    protected Integer startYear;
+
+    @Field(NoticeSolrField.START_YEAR_CONFIDENCE_INDEX)
+    @Indexed(name = NoticeSolrField.START_YEAR_CONFIDENCE_INDEX)
+    protected Integer startYearConfidenceIndex;
+
+    @Field(NoticeSolrField.END_YEAR)
+    @Indexed(name = NoticeSolrField.END_YEAR)
+    protected Integer endYear;
+
+    @Field(NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)
+    @Indexed(name = NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)
+    protected Integer endYearConfidenceIndex;
 
     @ChildDocument
     protected Set<ItemSolr> itemSolrs = new HashSet<>();
+
+    protected boolean toDelete;
 
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
