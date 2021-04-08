@@ -283,7 +283,7 @@ public class NoticeMapper {
                                         itemSolr.setRcr(subField.getValue());
                                     }
                                     if (subField.getCode().equalsIgnoreCase("z")) {
-                                        itemSolr.getPcp().add(subField.getValue());
+                                        itemSolr.setPcp(subField.getValue());
                                     }
                                 }
                             }

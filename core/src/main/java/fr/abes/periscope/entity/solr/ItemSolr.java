@@ -37,7 +37,7 @@ public class ItemSolr {
 
     @Field(ItemSolrField.PCP)
     @Indexed(name = ItemSolrField.PCP)
-    private List<String> pcp = new ArrayList<>();
+    private String pcp;
 
     public ItemSolr(String ppn, String epn) {
         this.id = epn;

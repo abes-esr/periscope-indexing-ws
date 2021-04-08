@@ -34,12 +34,6 @@ public class PeriscopeIndexationApplication extends SpringBootServletInitializer
 
 	@Override
 	public void run(String... args) throws Exception {
-
-		log.trace("Trace Message!");
-		log.debug("Debug Message!");
-		log.info("Info Message!");
-		log.warn("Warn Message!");
-		log.error("Error Message!");
 	}
 
 }
