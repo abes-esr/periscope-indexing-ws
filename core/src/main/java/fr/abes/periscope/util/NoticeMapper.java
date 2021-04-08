@@ -106,9 +106,11 @@ public class NoticeMapper {
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
 
-                                // zone 101-a
+                                // zone 100-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     String value = subField.getValue();
+                                    target.setProcessingGlobalData(value);
+
                                     // Extraction de la date de début
                                     try {
                                         PublicationYear year = buildStartPublicationYear(value);
@@ -290,6 +292,8 @@ public class NoticeMapper {
                             target.addItem(itemSolr);
                         }
                     }
+
+                    target.setNbLocation(target.getRcrList().size());
 
                     return target;
 

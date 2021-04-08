@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.solr.client.solrj.beans.Field;
+import org.apache.solr.common.util.Hash;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.ChildDocument;
 import org.springframework.data.solr.core.mapping.Indexed;
@@ -119,9 +120,11 @@ public class NoticeSolr {
     protected Set<ItemSolr> itemSolrs = new HashSet<>();
 
     protected boolean toDelete;
+    protected Set<String> rcrList = new HashSet<>();
 
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
+        this.rcrList.add(specimen.getRcr());
     }
 
     @Override
