@@ -86,16 +86,16 @@ public class NoticeMapper {
                     while (iterator.hasNext()) {
                         DataField dataField = iterator.next();
 
-                        // Zone 035
-                        if (dataField.getTag().equalsIgnoreCase("035")) {
+                        // Zone 011
+                        if (dataField.getTag().equalsIgnoreCase("011")) {
 
                             Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 035-a
-                                if (subField.getCode().equalsIgnoreCase("a") && subField.getValue().contains("issn")) {
-                                    target.setIssn(subField.getValue().substring(4));
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.setIssn(subField.getValue());
                                 }
                             }
                         }
