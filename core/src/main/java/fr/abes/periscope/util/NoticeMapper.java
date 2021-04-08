@@ -228,7 +228,7 @@ public class NoticeMapper {
 
                                 // zone 530-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setKeyShortedTitle(subField.getValue());
+                                    target.setKeyTitle(subField.getValue());
                                 }
 
                                 // zone 530-b
