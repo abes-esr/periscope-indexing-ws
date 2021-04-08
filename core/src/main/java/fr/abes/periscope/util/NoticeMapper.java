@@ -1,6 +1,6 @@
 package fr.abes.periscope.util;
 
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.solr.ItemSolr;
 import fr.abes.periscope.entity.xml.DataField;
 import fr.abes.periscope.entity.xml.NoticeXml;
@@ -34,6 +34,17 @@ public class NoticeMapper {
     }
 
     /**
+     * Fonction de mapping générique pour un objet
+     *
+     * @param source      Objet source
+     * @param targetClass Classe de l'objet cible
+     * @return Objet cible
+     */
+    public <S, T> T map(S source, Class<T> targetClass) {
+        return modelMapper.map(source, targetClass);
+    }
+
+    /**
      * Fonction de mapping générique pour des listes
      *
      * @param source      Liste source
@@ -48,27 +59,16 @@ public class NoticeMapper {
     }
 
     /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
-    }
-
-    /**
      * Convertisseur pour les notices XML vers les notices SolR avec des exemplaires
      */
     @Bean
     public void converterNoticeXML() {
 
-        Converter<NoticeXml, NoticeSolrExtended> myConverter = new Converter<NoticeXml, NoticeSolrExtended>() {
+        Converter<NoticeXml, NoticeSolr> myConverter = new Converter<NoticeXml, NoticeSolr>() {
 
-            public NoticeSolrExtended convert(MappingContext<NoticeXml, NoticeSolrExtended> context) {
+            public NoticeSolr convert(MappingContext<NoticeXml, NoticeSolr> context) {
                 NoticeXml source = context.getSource();
-                NoticeSolrExtended target = new NoticeSolrExtended();
+                NoticeSolr target = new NoticeSolr();
                 try {
                     boolean deleteFlag = source.getLeader().substring(5,6).equalsIgnoreCase("d")?true:false;
                     target.setToDelete(deleteFlag);
@@ -183,6 +183,8 @@ public class NoticeMapper {
 
                     return target;
 
+                } catch (NullPointerException ex) {
+                    throw new MappingException(Arrays.asList(new ErrorMessage("NoticeSolr has null field")));
                 } catch (Exception ex) {
                     throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
                 }

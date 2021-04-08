@@ -37,7 +37,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        String error = "Malformed JSON request";
+        String error = "Malformed XML request";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
@@ -94,7 +94,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(MappingException.class)
     protected ResponseEntity<Object> handleMappingException(MappingException ex) {
-        String error = "Malformed JSON request";
+        String error = "Malformed XML request";
         log.error(ex.getCause().getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex.getCause()));
     }
@@ -106,7 +106,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(MissingFieldException.class)
     protected ResponseEntity<Object> handleIllegalCriterionException(MissingFieldException ex) {
-        String error = "Malformed JSON request";
+        String error = "Malformed XML request";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }

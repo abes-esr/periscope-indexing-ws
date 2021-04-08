@@ -1,6 +1,6 @@
 package fr.abes.periscope.web.controller;
 
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.service.NoticeXmlService;
@@ -19,23 +19,43 @@ public class PublicController {
 
     private final NoticeStoreService noticeStoreService;
 
-    private final NoticeXmlService noticeXmlService;
-
     /** Service pour le mapping DTO */
-    @Autowired
     private NoticeMapper noticeMapper;
 
     @Autowired
-    public PublicController(NoticeStoreService noticeStoreService, NoticeXmlService noticeXmlService) {
+    public PublicController(NoticeStoreService noticeStoreService, NoticeMapper mapper) {
         this.noticeStoreService = noticeStoreService;
-        this.noticeXmlService = noticeXmlService;
+        this.noticeMapper = mapper;
+    }
+
+    @PutMapping(value = "/notices")
+    public String addNotice(@RequestBody @Valid NoticeXml notice) {
+
+        if (notice.isRessourceContinue()) {
+            NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+            noticeStoreService.save(noticeSolr);
+            return "OK";
+        }
+        return "SKIPPED";
     }
 
     @PostMapping(value = "/notices")
-    public String addNotice(@RequestBody @Valid NoticeXml notice) {
-        if (noticeXmlService.isRessourceContinue(notice)) {
-            NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
+    public String updateNotice(@RequestBody @Valid NoticeXml notice) {
+
+        if (notice.isRessourceContinue()) {
+            NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
             noticeStoreService.save(noticeSolr);
+            return "OK";
+        }
+        return "SKIPPED";
+    }
+
+    @DeleteMapping(value = "/notices")
+    public String deleteNotice(@RequestBody @Valid NoticeXml notice) {
+
+        if (notice.isRessourceContinue()) {
+            NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+            noticeStoreService.delete(noticeSolr);
             return "OK";
         }
         return "SKIPPED";

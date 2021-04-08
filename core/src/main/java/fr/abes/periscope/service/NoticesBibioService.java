@@ -2,6 +2,7 @@ package fr.abes.periscope.service;
 
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.repository.baseXml.NoticesBibioRepository;
+import fr.abes.periscope.util.BaseXMLConfiguration;
 import fr.abes.periscope.util.TrackExecutionTime;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 
-
+@BaseXMLConfiguration
 @Data
 @Service
 public class NoticesBibioService {

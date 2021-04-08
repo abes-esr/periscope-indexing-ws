@@ -1,7 +1,7 @@
 package fr.abes.periscope.service;
 
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
-import fr.abes.periscope.repository.NoticeRepository;
+import fr.abes.periscope.entity.solr.NoticeSolr;
+import fr.abes.periscope.repository.solr.NoticeSolrRepository;
 import fr.abes.periscope.util.NoticeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ import java.util.List;
 @Service
 public class NoticeStoreService {
 
-    private final NoticeRepository noticeRepository;
+    private final NoticeSolrRepository noticeRepository;
 
     private final NoticeMapper noticeMapper;
 
     @Autowired
-    public NoticeStoreService(NoticeRepository noticeRepository, NoticeMapper mapper) {
+    public NoticeStoreService(NoticeSolrRepository noticeRepository, NoticeMapper mapper) {
         this.noticeRepository = noticeRepository;
         this.noticeMapper = mapper;
     }
 
-    public void saveOrDelete(List<NoticeSolrExtended> notice) {
+    public void saveOrDelete(List<NoticeSolr> notice) {
         List noticeToDelete = new ArrayList();
         List noticeToUpdate = new ArrayList();
         notice.forEach(n -> {
@@ -42,7 +42,7 @@ public class NoticeStoreService {
         deleteList(noticeToDelete);
     }
 
-    public Iterable<NoticeSolrExtended> saveList(List<NoticeSolrExtended> notice) {
+    public Iterable<NoticeSolr> saveList(List<NoticeSolr> notice) {
         try {
             if (notice.size() > 0)
                 return noticeRepository.saveAll(notice);
@@ -52,16 +52,16 @@ public class NoticeStoreService {
         return null;
     }
 
-    public void deleteList(List<NoticeSolrExtended> notice) {
+    public void deleteList(List<NoticeSolr> notice) {
         if (notice.size() > 0)
             noticeRepository.deleteAll(notice);
     }
 
-    public void delete(NoticeSolrExtended notice) {
+    public void delete(NoticeSolr notice) {
         noticeRepository.delete(notice);
     }
 
-    public NoticeSolrExtended save(NoticeSolrExtended notice) {
+    public NoticeSolr save(NoticeSolr notice) {
         return noticeRepository.save(notice);
     }
 }
