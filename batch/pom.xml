@@ -96,13 +96,13 @@
                 <configuration>
                     <mainClass>fr.abes.periscope.BatchApplication</mainClass>
                 </configuration>
-                <!--<executions>
+                <executions>
                     <execution>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
                     </execution>
-                </executions>-->
+                </executions>
             </plugin>
         </plugins>
     </build>
