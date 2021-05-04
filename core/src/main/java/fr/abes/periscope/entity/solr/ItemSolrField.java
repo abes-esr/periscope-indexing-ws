@@ -7,6 +7,7 @@ public abstract class ItemSolrField {
 
     public static final String ID = "id";
     public static final String EPN = "zone_930$5";
+    public static final String PARENT = "ppn_parent";
 
     //--------------------------------
     // Zone 930

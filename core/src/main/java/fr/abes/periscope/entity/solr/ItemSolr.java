@@ -7,9 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter @Setter
 @SolrDocument
 public class ItemSolr {
@@ -23,9 +20,9 @@ public class ItemSolr {
     @Indexed(name = ItemSolrField.EPN)
     private String epn;
 
-    @Field(NoticeSolrField.PPN)
-    @Indexed(name = NoticeSolrField.PPN)
-    private String ppn;
+    @Field(ItemSolrField.PARENT)
+    @Indexed(name = ItemSolrField.PARENT)
+    private String id_parent;
 
     @Field(NoticeSolrField.TITLE_TYPE)
     @Indexed(name = NoticeSolrField.TITLE_TYPE)
@@ -39,10 +36,10 @@ public class ItemSolr {
     @Indexed(name = ItemSolrField.PCP)
     private String pcp;
 
-    public ItemSolr(String ppn, String epn) {
+    public ItemSolr(String id_parent, String epn) {
         this.id = epn;
         this.epn = epn;
-        this.ppn = ppn; // Lien avec la notice parent
+        this.id_parent = id_parent; // Lien avec la notice parent
     }
 
     @Override

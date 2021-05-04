@@ -293,7 +293,7 @@ public class NoticeMapper {
                         }
                     }
 
-                    target.setNbLocation(target.getRcrList().size());
+                    target.setNbLocation(target.getRcrList().size() - 1);
 
                     return target;
 
