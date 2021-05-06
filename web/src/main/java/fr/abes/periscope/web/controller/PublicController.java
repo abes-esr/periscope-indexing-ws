@@ -1,10 +1,9 @@
 package fr.abes.periscope.web.controller;
 
-import fr.abes.periscope.entity.solr.NoticeSolr;
-import fr.abes.periscope.entity.xml.NoticeXml;
-import fr.abes.periscope.service.NoticeStoreService;
-import fr.abes.periscope.service.NoticeXmlService;
-import fr.abes.periscope.util.NoticeMapper;
+import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.xml.NoticeXml;
+import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.NoticeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
