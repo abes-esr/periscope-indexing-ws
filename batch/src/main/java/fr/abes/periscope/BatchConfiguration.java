@@ -3,10 +3,9 @@ package fr.abes.periscope;
 import fr.abes.periscope.partitioner.RangePartitioner;
 import fr.abes.periscope.processor.NoticePagingItemReader;
 import fr.abes.periscope.processor.NoticeProcessor;
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.processor.SolrItemWriter;
-import fr.abes.periscope.service.FooService;
 import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.service.NoticesBibioService;
 import fr.abes.periscope.util.NoticesBibioMapper;
@@ -96,7 +95,7 @@ public class BatchConfiguration {
 
     @Bean(name = "slave")
     public Step slaveStep() throws Exception {
-        return stepBuilderFactory.get("slave").<NoticesBibio, NoticeSolrExtended>chunk(chunkSize)
+        return stepBuilderFactory.get("slave").<NoticesBibio, NoticeSolr>chunk(chunkSize)
                 .reader(slaveReader(null, null))
                 .processor(slaveProcessor(null)).writer(slaveWriter()).build();
     }

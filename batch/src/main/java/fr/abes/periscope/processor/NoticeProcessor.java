@@ -1,10 +1,8 @@
 package fr.abes.periscope.processor;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.service.NoticeXmlService;
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter @Setter
 @Slf4j
-public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrExtended> {
+public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolr> {
     private String threadName;
 
     @Autowired
@@ -30,7 +28,7 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
     private NoticeXmlService service;
 
     @Override
-    public NoticeSolrExtended process(NoticesBibio notice) throws Exception {
+    public NoticeSolr process(NoticesBibio notice) throws Exception {
         //log.debug("Processing " + threadName + " : notice n°" + notice.getId());
         try {
             JacksonXmlModule module = new JacksonXmlModule();
@@ -38,7 +36,7 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolrEx
             XmlMapper xmlMapper = new XmlMapper(module);
             NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml().getCharacterStream(), NoticeXml.class);
             if (service.isRessourceContinue(noticeXml)) {
-                return noticeMapper.map(noticeXml, NoticeSolrExtended.class);
+                return noticeMapper.map(noticeXml, NoticeSolr.class);
             }
         }catch (Exception ex) {
             log.error("Erreur dans la conversion JSON notice n° : " + notice.getId() + " Exception " + ex.getClass().getName() + " : " + ex.getMessage());

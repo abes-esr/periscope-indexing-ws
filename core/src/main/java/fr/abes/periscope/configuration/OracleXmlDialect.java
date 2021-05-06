@@ -1,8 +1,10 @@
 package fr.abes.periscope.configuration;
 
+import fr.abes.periscope.util.BaseXMLConfiguration;
 import oracle.xdb.XMLType;
 import org.hibernate.dialect.Oracle12cDialect;
 
+@BaseXMLConfiguration
 public class OracleXmlDialect extends Oracle12cDialect {
     public OracleXmlDialect() {
         registerHibernateType(XMLType._SQL_TYPECODE, "XMLTYPE");

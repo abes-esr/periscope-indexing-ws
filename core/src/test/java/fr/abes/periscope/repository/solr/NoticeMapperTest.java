@@ -2,7 +2,7 @@ package fr.abes.periscope.repository.solr;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.util.NoticeMapper;
 import org.apache.commons.io.IOUtils;
@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,11 +24,14 @@ import java.nio.charset.StandardCharsets;
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
-@SpringBootTest
+@SpringBootTest(classes = NoticeMapper.class)
 public class NoticeMapperTest {
 
     @Autowired
     private NoticeMapper noticeMapper;
+
+    @Value("classpath:noticeXml/13282261X.xml")
+    private Resource xmlFile;
 
     /**
      * Test titre mort
@@ -35,20 +41,17 @@ public class NoticeMapperTest {
     @Disabled
     public void testDeadTitle() throws IOException {
 
-        File file = new File("/Users/maraval/Documents/Periscope/notice.xml");
-        String xml = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
+        String xml = IOUtils.toString(new FileInputStream(xmlFile.getFile()), StandardCharsets.UTF_8);
 
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
-        String expectedPpn = "000014567";
+        String expectedPpn = "13282261X";
         String expectedIssn = "21001456";
 
-        NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
-
-        System.out.println(noticeSolr);
+        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
 
         Assert.assertEquals(expectedPpn, noticeSolr.getPpn());
         Assert.assertEquals(expectedIssn, noticeSolr.getIssn());

@@ -17,7 +17,7 @@
     <!--     Description du projet                             -->
     <!-- ===================================================== -->
     <groupId>fr.abes.periscope</groupId>
-    <artifactId>periscope-indexation</artifactId>
+    <artifactId>periscope-indexing</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>Periscope Indexation</name>
     <description>Preuve de concept</description>
@@ -27,7 +27,9 @@
     <!-- ===================================================== -->
     <properties>
         <finalName>periscope-${project.artifactId}-${project.version}</finalName>
-        <baseDir>./target/</baseDir>
+        <warName>periscope-indexing</warName>
+        <webBaseDir>./target/</webBaseDir>
+        <batchBaseDir>./target/</batchBaseDir>
     </properties>
 
     <!-- =========================================================== -->

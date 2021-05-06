@@ -1,9 +1,5 @@
 package fr.abes.periscope.exception;
 
-import com.fasterxml.jackson.databind.node.MissingNode;
-
-import java.util.MissingResourceException;
-
 /**
  * Si le critère n'est pas valide
  */

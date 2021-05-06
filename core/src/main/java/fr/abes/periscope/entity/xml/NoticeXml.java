@@ -26,6 +26,14 @@ public class NoticeXml {
     @JacksonXmlProperty(localName = "datafield")
     private List<DataField> dataFields;
 
+    public boolean isRessourceContinue() {
+
+        if (leader.startsWith("d0", 7) || leader.startsWith("s0", 7) || leader.startsWith("i0", 7)) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "Notice {"+ "leader="+ leader+"}";

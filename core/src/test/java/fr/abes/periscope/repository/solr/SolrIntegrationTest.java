@@ -3,7 +3,7 @@ package fr.abes.periscope.repository.solr;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.EnableOnIntegrationTest;
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticeXml;
 import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.util.NoticeMapper;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @EnableOnIntegrationTest
-@SpringBootTest
+@SpringBootTest(classes = { NoticeMapper.class, NoticeStoreService.class})
 public class SolrIntegrationTest {
 
     @Autowired
@@ -44,7 +44,7 @@ public class SolrIntegrationTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
-        NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
+        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
 
         System.out.println(noticeSolr);
 
@@ -65,7 +65,7 @@ public class SolrIntegrationTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
-        NoticeSolrExtended noticeSolr = noticeMapper.map(notice, NoticeSolrExtended.class);
+        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
 
         System.out.println(noticeSolr);
 

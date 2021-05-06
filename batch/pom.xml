@@ -5,7 +5,7 @@
         Abes-hello-back
      ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -19,6 +19,7 @@
     <!-- =========================================================== -->
     <groupId>fr.abes.periscope</groupId>
     <artifactId>batch</artifactId>
+    <packaging>jar</packaging>
     <name>batch</name>
     <description>Batch d'indexation des notices de la base XML dans moteur d'indexation</description>
 
@@ -26,13 +27,15 @@
     <!--     Gestion des dependances                                 -->
     <!-- =========================================================== -->
     <dependencies>
+
         <!-- === Module projet === -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <!-- === Spring batch === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,6 +47,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <!--- === Tests === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -81,6 +85,7 @@
                 </includes>
             </resource>
         </resources>
+
         <plugins>
             <!-- ======================================================= -->
             <!--     Compilation de l'application Spring                 -->

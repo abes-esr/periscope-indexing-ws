@@ -1,6 +1,6 @@
 package fr.abes.periscope.service;
 
-import fr.abes.periscope.entity.solr.NoticeSolrExtended;
+import fr.abes.periscope.entity.solr.NoticeSolr;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class FooService {
-    public void saveOrDelete(List<NoticeSolrExtended> notices) {
+    public void saveOrDelete(List<NoticeSolr> notices) {
         List noticeToDelete = new ArrayList();
         List noticeToUpdate = new ArrayList();
         notices.forEach(n -> {
@@ -25,21 +25,21 @@ public class FooService {
         deleteList(noticeToDelete);
     }
 
-    public NoticeSolrExtended save(NoticeSolrExtended notice) {
+    public NoticeSolr save(NoticeSolr notice) {
         //log.info("Sauvegarde notice " + notice.getId());
         return notice;
     }
 
-    public NoticeSolrExtended delete(NoticeSolrExtended notice) {
+    public NoticeSolr delete(NoticeSolr notice) {
         log.info("Suppression notice " + notice.getId());
         return notice;
     }
 
-    public void saveList(List<NoticeSolrExtended> notice) {
+    public void saveList(List<NoticeSolr> notice) {
         log.debug("sauvegarde liste " + notice.size());
     }
 
-    public void deleteList(List<NoticeSolrExtended> notice) {
+    public void deleteList(List<NoticeSolr> notice) {
         log.debug("suppression liste " + notice.size());
     }
 }

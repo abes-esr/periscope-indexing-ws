@@ -1,6 +1,7 @@
 package fr.abes.periscope.configuration;
 
 
+import fr.abes.periscope.util.BaseXMLConfiguration;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 @EnableJpaRepositories(entityManagerFactoryRef = "baseXmlEntityManager",
         basePackages = "fr.abes.periscope.repository.baseXml")
 @NoArgsConstructor
+@BaseXMLConfiguration
 public class BaseXmlConfig {
     @Value("${basexml.datasource.url}")
     private String url;

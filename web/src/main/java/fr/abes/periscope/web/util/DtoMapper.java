@@ -14,9 +14,15 @@ public class DtoMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
+    /**
+     * Fonction de mapping générique pour un objet
+     *
+     * @param source      Objet source
+     * @param targetClass Classe de l'objet cible
+     * @return Objet cible
+     */
+    public <S, T> T map(S source, Class<T> targetClass) {
+        return modelMapper.map(source, targetClass);
     }
 
     /**
@@ -31,17 +37,6 @@ public class DtoMapper {
                 .stream()
                 .map(element -> modelMapper.map(element, targetClass))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
     }
 
 }

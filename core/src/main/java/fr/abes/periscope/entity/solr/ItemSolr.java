@@ -1,51 +1,47 @@
 package fr.abes.periscope.entity.solr;
 
-import fr.abes.periscope.repository.solr.NoticeField;
-import fr.abes.periscope.repository.solr.ItemField;
 import lombok.Getter;
 import lombok.Setter;
-import net.sf.saxon.om.Item;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 @SolrDocument
 public class ItemSolr {
 
     @Id
-    @Field(ItemField.ID)
-    @Indexed(name = ItemField.ID, type = ItemField.ID_TYPE)
+    @Field(ItemSolrField.ID)
+    @Indexed(name = ItemSolrField.ID)
     private String id;
 
-    @Field(ItemField.EPN)
-    @Indexed(name = ItemField.EPN, type = ItemField.EPN_TYPE)
+    @Field(ItemSolrField.EPN)
+    @Indexed(name = ItemSolrField.EPN)
     private String epn;
 
-    @Field(NoticeField.PPN)
-    @Indexed(name = NoticeField.PPN, type = NoticeField.PPN_TYPE)
+    @Field(NoticeSolrField.PPN)
+    @Indexed(name = NoticeSolrField.PPN)
     private String ppn;
 
-    @Field(NoticeField.TITLE_TYPE)
-    @Indexed(name = NoticeField.TITLE_TYPE, type = NoticeField.TITLE_TYPE_TYPE)
+    @Field(NoticeSolrField.TITLE_TYPE)
+    @Indexed(name = NoticeSolrField.TITLE_TYPE)
     private String type = "exemplaire";
 
-    @Field(ItemField.RCR)
-    @Indexed(name = ItemField.RCR, type = ItemField.RCR_TYPE)
+    @Field(ItemSolrField.RCR)
+    @Indexed(name = ItemSolrField.RCR)
     private String rcr;
 
-    @Field(ItemField.PCP)
-    @Indexed(name = ItemField.PCP, type = ItemField.PCP_TYPE)
-    private List<String> pcp;
+    @Field(ItemSolrField.PCP)
+    @Indexed(name = ItemSolrField.PCP)
+    private String pcp;
 
     public ItemSolr(String ppn, String epn) {
         this.id = epn;
         this.epn = epn;
-
         this.ppn = ppn; // Lien avec la notice parent
     }
 
@@ -73,6 +69,6 @@ public class ItemSolr {
 
     @Override
     public String toString() {
-        return "SpecimenSolr {"+ "id="+ id+", rcr="+rcr+"}";
+        return "ItemSolr {"+ "id="+ id+", rcr="+rcr+"}";
     }
 }
