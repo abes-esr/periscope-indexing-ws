@@ -39,7 +39,6 @@ public class SolrIntegrationTest {
 
     @Test
     @DisplayName("ajout d'une notice avec exemplaire")
-    @Disabled
     public void addNoticeToSolr() throws IOException {
 
         String xml = IOUtils.toString(new FileInputStream(xmlFile.getFile()), StandardCharsets.UTF_8);
@@ -58,7 +57,6 @@ public class SolrIntegrationTest {
 
     @Test
     @DisplayName("supression d'une notice avec exemplaire")
-    @Disabled
     public void deleteNoticeToSolr() throws IOException {
 
         String xml = IOUtils.toString(new FileInputStream(xmlFile.getFile()), StandardCharsets.UTF_8);

@@ -27,7 +27,7 @@ public class SolRConfig {
         }
 
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.add("wt", "Après");
+        params.add("wt", "javabin");
         params.add("version","2.2");
         params.add("indent", "on");
         params.add("omitHeader","true");
