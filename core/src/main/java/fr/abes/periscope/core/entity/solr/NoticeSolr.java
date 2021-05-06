@@ -126,6 +126,10 @@ public class NoticeSolr {
         this.rcrList.add(specimen.getRcr());
     }
 
+    public void addExternalUrl(String url) {
+        this.externalURLs.add(url);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

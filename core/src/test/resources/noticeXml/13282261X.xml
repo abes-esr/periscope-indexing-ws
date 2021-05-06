@@ -12,6 +12,13 @@
     <subfield code="a">2100-1456</subfield>
     <subfield code="f">2100-1456</subfield>
   </datafield>
+  <datafield tag="033" ind1=" " ind2=" ">
+    <subfield code="a">www.abes.fr</subfield>
+    <subfield code="2">ABES</subfield>
+  </datafield>
+  <datafield tag="033" ind1=" " ind2=" ">
+    <subfield code="a">www.idref.fr</subfield>
+  </datafield>
   <datafield tag="035" ind1=" " ind2=" ">
     <subfield code="a">(OCoLC)473129163</subfield>
   </datafield>
@@ -39,9 +46,12 @@
   <datafield tag="200" ind1="1" ind2=" ">
     <subfield code="a">Auvergne environnement</subfield>
     <subfield code="b">Texte imprimé</subfield>
+    <subfield code="c">Titre from different author</subfield>
+    <subfield code="d">Titre parallèle</subfield>
     <subfield code="e">magazine trimestriel des associations pour la nature et l&apos;environnement</subfield>
     <subfield code="f">Fédération de la région Auvergne pour la nature et l&apos;environnement et l&apos;ensemble des associations affiliées</subfield>
     <subfield code="g">[directeur de la publication Jacques Debeaud]</subfield>
+    <subfield code="i">Titre de section</subfield>
   </datafield>
   <datafield tag="207" ind1=" " ind2="0">
     <subfield code="a"> N° 111 (1er trimestre 2009)-no. 121 (2012)</subfield>
@@ -59,6 +69,10 @@
   </datafield>
   <datafield tag="530" ind1="0" ind2=" ">
     <subfield code="a">Auvergne environnement</subfield>
+    <subfield code="b">Key title qualifier</subfield>
+  </datafield>
+  <datafield tag="531" ind1="0" ind2=" ">
+    <subfield code="a">Autre titre</subfield>
   </datafield>
   <datafield tag="676" ind1=" " ind2=" ">
     <subfield code="a">363.700 9445</subfield>

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NoticeSolrRepository extends SolrCrudRepository<NoticeSolr, String> {
-
+    NoticeSolr findByPpn(String ppn);
 }

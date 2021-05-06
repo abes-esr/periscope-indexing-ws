@@ -61,4 +61,6 @@ public class NoticeStoreService {
     public NoticeSolr save(NoticeSolr notice) {
         return noticeRepository.save(notice);
     }
+
+    public NoticeSolr findByPpn(String ppn) { return noticeRepository.findByPpn(ppn);}
 }

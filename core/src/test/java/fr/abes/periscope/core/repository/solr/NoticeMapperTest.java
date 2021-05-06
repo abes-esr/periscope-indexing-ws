@@ -39,7 +39,6 @@ public class NoticeMapperTest {
      */
     @Test
     @DisplayName("Titre mort")
-    @Disabled
     public void testDeadTitle() throws IOException {
 
         String xml = IOUtils.toString(new FileInputStream(xmlFile.getFile()), StandardCharsets.UTF_8);
@@ -50,7 +49,7 @@ public class NoticeMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
         String expectedPpn = "13282261X";
-        String expectedIssn = "21001456";
+        String expectedIssn = "2100-1456";
 
         NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
 

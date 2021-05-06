@@ -92,14 +92,23 @@ public class NoticeMapper {
                             Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
-
-                                // zone 035-a
+                                // zone 011-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.setIssn(subField.getValue());
                                 }
                             }
                         }
 
+                        //zone 033
+                        if (dataField.getTag().equalsIgnoreCase("033")) {
+                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
+                            while (subFieldIterator.hasNext()) {
+                                SubField subField = subFieldIterator.next();
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.addExternalUrl(subField.getValue());
+                                }
+                            }
+                        }
                         // Zone 100
                         if (dataField.getTag().equalsIgnoreCase("100")) {
                             Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
@@ -155,7 +164,7 @@ public class NoticeMapper {
 
                                 // zone 102-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setLanguage(subField.getValue());
+                                    target.setCountry(subField.getValue());
                                 }
                             }
                         }

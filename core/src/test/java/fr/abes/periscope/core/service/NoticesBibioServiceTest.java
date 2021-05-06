@@ -17,7 +17,7 @@ public class NoticesBibioServiceTest {
 
     @Test
     void testFindById() {
-        assertThat(service.findById(1).getId()).isEqualTo(1);
+        assertThat(service.findById(1234567).getId()).isEqualTo(1234567);
     }
 
 }
