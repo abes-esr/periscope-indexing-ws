@@ -94,7 +94,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>fr.abes.periscope.BatchApplication</mainClass>
+                    <mainClass>fr.abes.periscope.batch.BatchApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

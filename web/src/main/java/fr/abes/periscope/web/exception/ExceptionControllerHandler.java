@@ -1,6 +1,6 @@
 package fr.abes.periscope.web.exception;
 
-import fr.abes.periscope.exception.MissingFieldException;
+import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.MappingException;
 import org.springframework.core.Ordered;

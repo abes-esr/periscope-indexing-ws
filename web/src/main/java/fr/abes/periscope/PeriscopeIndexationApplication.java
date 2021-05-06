@@ -1,12 +1,11 @@
 package fr.abes.periscope;
 
-import fr.abes.periscope.repository.solr.NoticeSolrRepository;
-import fr.abes.periscope.util.BaseXMLConfiguration;
+import fr.abes.periscope.core.repository.solr.NoticeSolrRepository;
+import fr.abes.periscope.core.util.BaseXMLConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
