@@ -20,12 +20,9 @@ public class NoticeStoreService {
 
     private final NoticeSolrRepository noticeRepository;
 
-    private final NoticeMapper noticeMapper;
-
     @Autowired
-    public NoticeStoreService(NoticeSolrRepository noticeRepository, NoticeMapper mapper) {
+    public NoticeStoreService(NoticeSolrRepository noticeRepository) {
         this.noticeRepository = noticeRepository;
-        this.noticeMapper = mapper;
     }
 
     public void saveOrDelete(List<NoticeSolr> notice) {

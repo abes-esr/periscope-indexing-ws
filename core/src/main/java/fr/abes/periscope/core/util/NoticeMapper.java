@@ -293,7 +293,7 @@ public class NoticeMapper {
                         }
                     }
 
-                    target.setNbLocation(target.getRcrList().size() - 1);
+                    target.setNbLocation(target.getRcrList().size());
 
                     return target;
 
@@ -317,7 +317,6 @@ public class NoticeMapper {
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
         String yearCode = value.substring(8, 9);
         String candidateYear;
-        PublicationYear year = new PublicationYear();
         switch (yearCode) {
             case "b":
             case "a":
