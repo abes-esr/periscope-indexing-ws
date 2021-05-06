@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>periscope-indexation</artifactId>
+        <artifactId>periscope-indexing</artifactId>
         <groupId>fr.abes.periscope</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -94,7 +94,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>fr.abes.periscope.BatchApplication</mainClass>
+                    <mainClass>fr.abes.periscope.batch.BatchApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
