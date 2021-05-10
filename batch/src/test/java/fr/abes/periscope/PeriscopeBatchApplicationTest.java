@@ -1,6 +1,5 @@
 package fr.abes.periscope;
 
-import fr.abes.periscope.batch.BatchApplication;
 import org.junit.Test;
 import org.junit.Assert;
 import org.springframework.boot.test.context.SpringBootTest;
