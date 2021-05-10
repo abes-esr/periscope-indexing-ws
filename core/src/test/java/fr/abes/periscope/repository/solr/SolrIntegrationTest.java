@@ -42,7 +42,7 @@ public class SolrIntegrationTest {
     private Resource xmlFile1;
 
     private NoticeSolr getNoticeFromFile(Resource file) throws IOException {
-        String xml = IOUtils.toString(new FileInputStream(xmlFile1.getFile()), StandardCharsets.UTF_8);
+        String xml = IOUtils.toString(new FileInputStream(file.getFile()), StandardCharsets.UTF_8);
 
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
@@ -92,7 +92,7 @@ public class SolrIntegrationTest {
         assertThat(noticesolrOut.getStartYearConfidenceIndex()).isEqualTo(0);
         assertThat(noticesolrOut.getExternalURLs().size()).isEqualTo(2);
 
-        //noticeService.delete(notice);
+        noticeService.delete(notice);
     }
 
 }
