@@ -74,14 +74,15 @@ public class SolrIntegrationTest {
 
         System.out.println(noticesolrOut);
         assertThat(noticesolrOut.getIssn()).isEqualTo("2100-1456");
-        assertThat(noticesolrOut.getEditor()).isEqualTo("Fédération Allier Nature, FAN");
+        assertThat(noticesolrOut.getEditorForDisplay()).isEqualTo("Fédération Allier Nature, FAN");
+        assertThat(noticesolrOut.getEditorForSearch().size()).isEqualTo(3);
         assertThat(noticesolrOut.getKeyTitle()).isEqualTo("Auvergne environnement");
-        assertThat(noticesolrOut.getKeyShortedTitle()).isEqualTo("Autre titre");
-        assertThat(noticesolrOut.getProperTitle()).isEqualTo("Auvergne environnement");
-        assertThat(noticesolrOut.getTitleFromDifferentAuthor()).isEqualTo("Titre from different author");
-        assertThat(noticesolrOut.getParallelTitle()).isEqualTo("Titre parallèle");
-        assertThat(noticesolrOut.getTitleComplement()).isEqualTo("magazine trimestriel des associations pour la nature et l'environnement");
-        assertThat(noticesolrOut.getSectionTitle()).isEqualTo("Titre de section");
+        assertThat(noticesolrOut.getKeyShortedTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getProperTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getTitleFromDifferentAuthor().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getParallelTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getTitleComplement().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getSectionTitle().size()).isEqualTo(2);
         assertThat(noticesolrOut.getKeyTitleQualifer()).isEqualTo("Key title qualifier");
         assertThat(noticesolrOut.getNbLocation()).isEqualTo(5);
         assertThat(noticesolrOut.getLanguage()).isEqualTo("fre");

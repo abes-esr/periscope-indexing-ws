@@ -45,13 +45,20 @@
   </datafield>
   <datafield tag="200" ind1="1" ind2=" ">
     <subfield code="a">Auvergne environnement</subfield>
+    <subfield code="a">Test second titre</subfield>
     <subfield code="b">Texte imprimé</subfield>
     <subfield code="c">Titre from different author</subfield>
+    <subfield code="c">Test second titre</subfield>
     <subfield code="d">Titre parallèle</subfield>
+    <subfield code="d">Test second titre</subfield>
     <subfield code="e">magazine trimestriel des associations pour la nature et l&apos;environnement</subfield>
+    <subfield code="e">Test second titre</subfield>
     <subfield code="f">Fédération de la région Auvergne pour la nature et l&apos;environnement et l&apos;ensemble des associations affiliées</subfield>
+    <subfield code="f">Test second titre</subfield>
     <subfield code="g">[directeur de la publication Jacques Debeaud]</subfield>
+    <subfield code="g">Test second titre</subfield>
     <subfield code="i">Titre de section</subfield>
+    <subfield code="i">Test second titre</subfield>
   </datafield>
   <datafield tag="207" ind1=" " ind2="0">
     <subfield code="a"> N° 111 (1er trimestre 2009)-no. 121 (2012)</subfield>
@@ -60,7 +67,12 @@
     <subfield code="a">Dompierre-sur-Besbre</subfield>
     <subfield code="b">Maison des associations, 216 av. de la Gare ; 03290</subfield>
     <subfield code="c">Fédération Allier Nature, FAN</subfield>
+    <subfield code="c">Test editeur 2</subfield>
     <subfield code="d">2009-2010</subfield>
+  </datafield>
+  <datafield tag="210" ind1="" ind2="">
+    <subfield code="a">Test editeur 2 prime</subfield>
+    <subfield code="c">Test editeur 2 prime</subfield>
   </datafield>
   <datafield tag="430" ind1=" " ind2="|">
     <subfield code="0">039454002</subfield>
@@ -73,6 +85,9 @@
   </datafield>
   <datafield tag="531" ind1="0" ind2=" ">
     <subfield code="a">Autre titre</subfield>
+  </datafield>
+  <datafield tag="531" ind1="" ind2="">
+    <subfield code="a">Test autre titre clé</subfield>
   </datafield>
   <datafield tag="676" ind1=" " ind2=" ">
     <subfield code="a">363.700 9445</subfield>
@@ -154,6 +169,7 @@
     <subfield code="5">631135211:41133793901</subfield>
     <subfield code="b">631135211</subfield>
     <subfield code="z">PCAuv</subfield>
+    <subfield code="z">PCAq</subfield>
     <subfield code="j">f</subfield>
   </datafield>
   <datafield tag="955" ind1="4" ind2="1">

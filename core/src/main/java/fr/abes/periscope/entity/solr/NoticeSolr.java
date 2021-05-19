@@ -39,49 +39,57 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.ISSN)
     protected String issn;
 
-    @Field(NoticeSolrField.EDITOR)
-    @Indexed(name = NoticeSolrField.EDITOR)
-    protected String editor;
+    @Field(NoticeSolrField.EDITOR_T)
+    @Indexed(name = NoticeSolrField.EDITOR_T)
+    protected List<String> editorForSearch = new ArrayList<>();
+
+    @Field(NoticeSolrField.EDITOR_Z)
+    @Indexed(name = NoticeSolrField.EDITOR_Z)
+    protected String editorForDisplay;
 
     @Field(NoticeSolrField.PROCESSING_GLOBAL_DATA)
     @Indexed(name = NoticeSolrField.PROCESSING_GLOBAL_DATA)
     protected String processingGlobalData;
 
-    @Field(NoticeSolrField.KEY_TITLE)
-    @Indexed(name = NoticeSolrField.KEY_TITLE)
-    protected String keyTitle;
-
-    @Field(NoticeSolrField.KEY_SHORTED_TITLE)
-    @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE)
-    protected String keyShortedTitle;
-
     @Field(NoticeSolrField.PROPER_TITLE)
     @Indexed(name = NoticeSolrField.PROPER_TITLE)
-    protected String properTitle;
+    protected List<String> properTitle = new ArrayList<>();
 
     @Field(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR)
     @Indexed(name = NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR)
-    protected String titleFromDifferentAuthor;
+    protected List<String> titleFromDifferentAuthor = new ArrayList<>();
 
     @Field(NoticeSolrField.PARALLEL_TITLE)
     @Indexed(name = NoticeSolrField.PARALLEL_TITLE)
-    protected String parallelTitle;
+    protected List<String> parallelTitle = new ArrayList<>();
 
     @Field(NoticeSolrField.TITLE_COMPLEMENT)
     @Indexed(name = NoticeSolrField.TITLE_COMPLEMENT)
-    protected String titleComplement;
+    protected List<String> titleComplement = new ArrayList<>();
 
     @Field(NoticeSolrField.SECTION_TITLE)
     @Indexed(name = NoticeSolrField.SECTION_TITLE)
-    protected String sectionTitle;
+    protected List<String> sectionTitle = new ArrayList<>();
+
+    @Field(NoticeSolrField.KEY_TITLE)
+    @Indexed(name = NoticeSolrField.KEY_TITLE)
+    protected String keyTitle;
 
     @Field(NoticeSolrField.KEY_TITLE_QUALIFIER)
     @Indexed(name = NoticeSolrField.KEY_TITLE_QUALIFIER)
     protected String keyTitleQualifer;
 
+    @Field(NoticeSolrField.KEY_SHORTED_TITLE)
+    @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE)
+    protected List<String> keyShortedTitle = new ArrayList<>();
+
     @Field(NoticeSolrField.DOCUMENT_TYPE)
     @Indexed(name = NoticeSolrField.DOCUMENT_TYPE)
     protected String typeDocument;
+
+    @Field(NoticeSolrField.SUPPORT_TYPE)
+    @Indexed(name = NoticeSolrField.SUPPORT_TYPE)
+    protected String typeSupport;
 
     @Field(NoticeSolrField.EXTERNAL_URLS)
     @Indexed(name = NoticeSolrField.EXTERNAL_URLS)
@@ -128,6 +136,34 @@ public class NoticeSolr {
 
     public void addExternalUrl(String url) {
         this.externalURLs.add(url);
+    }
+
+    public void addEditor(String editor) {
+        this.editorForSearch.add(editor);
+    }
+
+    public void addKeyShortedTitle(String keyShortedTitle) {
+        this.keyShortedTitle.add(keyShortedTitle);
+    }
+
+    public void addProperTitle(String properTitle) {
+        this.properTitle.add(properTitle);
+    }
+
+    public void addTitleFromDifferentAuthor(String titleFromDifferentAuthor) {
+        this.titleFromDifferentAuthor.add(titleFromDifferentAuthor);
+    }
+
+    public void addParallelTitle(String parallelTitle) {
+        this.parallelTitle.add(parallelTitle);
+    }
+
+    public void addTitleComplement(String titleComplement) {
+        this.titleComplement.add(titleComplement);
+    }
+
+    public void addSectionTitle(String sectionTitle) {
+        this.sectionTitle.add(sectionTitle);
     }
 
     @Override

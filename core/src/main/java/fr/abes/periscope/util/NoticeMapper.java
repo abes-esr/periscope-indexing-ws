@@ -2,6 +2,7 @@ package fr.abes.periscope.util;
 
 import fr.abes.periscope.entity.OnGoingResourceType;
 import fr.abes.periscope.entity.PublicationYear;
+import fr.abes.periscope.entity.SupportType;
 import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.solr.ItemSolr;
 import fr.abes.periscope.entity.xml.DataField;
@@ -75,6 +76,8 @@ public class NoticeMapper {
                 try {
                     boolean deleteFlag = source.getLeader().substring(5,6).equalsIgnoreCase("d")?true:false;
                     target.setToDelete(deleteFlag);
+                    // Champ type de support
+                    target.setTypeSupport(extractSupportType(source.getLeader().substring(6,7)));
                     // ID
                     target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
 
@@ -191,27 +194,27 @@ public class NoticeMapper {
 
                                 // zone 200-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setProperTitle(subField.getValue());
+                                    target.addProperTitle(subField.getValue());
                                 }
 
                                 // zone 200-c
                                 if (subField.getCode().equalsIgnoreCase("c")) {
-                                    target.setTitleFromDifferentAuthor(subField.getValue());
+                                    target.addTitleFromDifferentAuthor(subField.getValue());
                                 }
 
                                 // zone 200-d
                                 if (subField.getCode().equalsIgnoreCase("d")) {
-                                    target.setParallelTitle(subField.getValue());
+                                    target.addParallelTitle(subField.getValue());
                                 }
 
                                 // zone 200-e
                                 if (subField.getCode().equalsIgnoreCase("e")) {
-                                    target.setTitleComplement(subField.getValue());
+                                    target.addTitleComplement(subField.getValue());
                                 }
 
                                 // zone 200-i
                                 if (subField.getCode().equalsIgnoreCase("i")) {
-                                    target.setSectionTitle(subField.getValue());
+                                    target.addSectionTitle(subField.getValue());
                                 }
                             }
                         }
@@ -223,9 +226,12 @@ public class NoticeMapper {
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
 
-                                // zone 210-a
+                                // zone 210-c
                                 if (subField.getCode().equalsIgnoreCase("c")) {
-                                    target.setEditor(subField.getValue());
+                                    if (target.getEditorForDisplay() == null) {
+                                        target.setEditorForDisplay(subField.getValue());
+                                    }
+                                    target.addEditor(subField.getValue());
                                 }
                             }
                         }
@@ -258,7 +264,7 @@ public class NoticeMapper {
 
                                 // zone 531-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setKeyShortedTitle(subField.getValue());
+                                    target.addKeyShortedTitle(subField.getValue());
                                 }
                             }
                         }
@@ -467,6 +473,39 @@ public class NoticeMapper {
                 return OnGoingResourceType.Z;
             default:
                 return OnGoingResourceType.X;
+        }
+    }
+    public String extractSupportType(String typeSupport) {
+        if (typeSupport == null) {
+            return SupportType.X;
+        }
+        switch (typeSupport) {
+            case "a":
+                return SupportType.A;
+            case "b":
+                return SupportType.B;
+            case "c":
+                return SupportType.C;
+            case "d":
+                return SupportType.D;
+            case "e":
+                return SupportType.E;
+            case "f":
+                return SupportType.F;
+            case "g":
+                return SupportType.G;
+            case "i":
+                return SupportType.I;
+            case "j":
+                return SupportType.J;
+            case "l":
+                return SupportType.L;
+            case "m":
+                return SupportType.M;
+            case "r":
+                return SupportType.R;
+            default:
+                return SupportType.X;
         }
     }
 
