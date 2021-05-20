@@ -79,10 +79,15 @@ public class SolrIntegrationTest {
         assertThat(noticesolrOut.getKeyTitle()).isEqualTo("Auvergne environnement");
         assertThat(noticesolrOut.getKeyShortedTitle().size()).isEqualTo(2);
         assertThat(noticesolrOut.getProperTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getProperTitleForDisplay()).isEqualTo("Auvergne environnement");
         assertThat(noticesolrOut.getTitleFromDifferentAuthor().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getTitleFromDifferentAuthorForDisplay()).isEqualTo("Titre from different author");
         assertThat(noticesolrOut.getParallelTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getParallelTitleForDisplay()).isEqualTo("Titre parallèle");
         assertThat(noticesolrOut.getTitleComplement().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getTitleComplementForDisplay()).isEqualTo("magazine trimestriel des associations pour la nature et l'environnement");
         assertThat(noticesolrOut.getSectionTitle().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getSectionTitleForDisplay()).isEqualTo("Titre de section");
         assertThat(noticesolrOut.getKeyTitleQualifer()).isEqualTo("Key title qualifier");
         assertThat(noticesolrOut.getNbLocation()).isEqualTo(5);
         assertThat(noticesolrOut.getLanguage()).isEqualTo("fre");

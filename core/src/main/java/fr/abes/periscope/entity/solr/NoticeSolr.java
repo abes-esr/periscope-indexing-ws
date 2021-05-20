@@ -51,21 +51,41 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.PROCESSING_GLOBAL_DATA)
     protected String processingGlobalData;
 
+    @Field(NoticeSolrField.PROPER_TITLE_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.PROPER_TITLE_FOR_DISPLAY)
+    protected String properTitleForDisplay;
+
     @Field(NoticeSolrField.PROPER_TITLE)
     @Indexed(name = NoticeSolrField.PROPER_TITLE)
     protected List<String> properTitle = new ArrayList<>();
+
+    @Field(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR_FOR_DISPLAY)
+    protected String titleFromDifferentAuthorForDisplay;
 
     @Field(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR)
     @Indexed(name = NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR)
     protected List<String> titleFromDifferentAuthor = new ArrayList<>();
 
+    @Field(NoticeSolrField.PARALLEL_TITLE_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.PARALLEL_TITLE_FOR_DISPLAY)
+    protected String parallelTitleForDisplay;
+
     @Field(NoticeSolrField.PARALLEL_TITLE)
     @Indexed(name = NoticeSolrField.PARALLEL_TITLE)
     protected List<String> parallelTitle = new ArrayList<>();
 
+    @Field(NoticeSolrField.TITLE_COMPLEMENT_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.TITLE_COMPLEMENT_FOR_DISPLAY)
+    protected String titleComplementForDisplay;
+
     @Field(NoticeSolrField.TITLE_COMPLEMENT)
     @Indexed(name = NoticeSolrField.TITLE_COMPLEMENT)
     protected List<String> titleComplement = new ArrayList<>();
+
+    @Field(NoticeSolrField.SECTION_TITLE_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.SECTION_TITLE_FOR_DISPLAY)
+    protected String sectionTitleForDisplay;
 
     @Field(NoticeSolrField.SECTION_TITLE)
     @Indexed(name = NoticeSolrField.SECTION_TITLE)
@@ -78,6 +98,10 @@ public class NoticeSolr {
     @Field(NoticeSolrField.KEY_TITLE_QUALIFIER)
     @Indexed(name = NoticeSolrField.KEY_TITLE_QUALIFIER)
     protected String keyTitleQualifer;
+
+    @Field(NoticeSolrField.KEY_SHORTED_TITLE_FOR_DISPLAY)
+    @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE_FOR_DISPLAY)
+    protected String keyShortedTitleForDisplay;
 
     @Field(NoticeSolrField.KEY_SHORTED_TITLE)
     @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE)

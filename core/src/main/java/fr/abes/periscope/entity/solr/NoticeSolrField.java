@@ -95,6 +95,7 @@ public abstract class NoticeSolrField {
     //--------------------------------
     // Type de document
     public static final String DOCUMENT_TYPE = "document_type";
+
     //--------------------------------
 
     //--------------------------------
@@ -118,13 +119,18 @@ public abstract class NoticeSolrField {
 
     //--------------------------------
     // Zone 200
+    public static final String PROPER_TITLE_FOR_DISPLAY = "zone_200$a_z";
     public static final String PROPER_TITLE = "zone_200$a_t";
     public static final String ZONE_200_B = "zone_200$b";
+    public static final String TITLE_FROM_DIFFERENT_AUTHOR_FOR_DISPLAY = "zone_200$c_z";
     public static final String TITLE_FROM_DIFFERENT_AUTHOR = "zone_200$c_t";
+    public static final String PARALLEL_TITLE_FOR_DISPLAY = "zone_200$d_z";
     public static final String PARALLEL_TITLE = "zone_200$d_t";
+    public static final String TITLE_COMPLEMENT_FOR_DISPLAY = "zone_200$e_z";
     public static final String TITLE_COMPLEMENT = "zone_200$e_t";
     public static final String ZONE_200_F = "zone_200$f";
     public static final String ZONE_200_G = "zone_200$g";
+    public static final String SECTION_TITLE_FOR_DISPLAY = "zone_200$i_z";
     public static final String SECTION_TITLE = "zone_200$i_t";
 
     //--------------------------------
@@ -149,6 +155,7 @@ public abstract class NoticeSolrField {
 
     //--------------------------------
     // Zone 531
+    public static final String KEY_SHORTED_TITLE_FOR_DISPLAY = "zone_531$a_z";
     public static final String KEY_SHORTED_TITLE = "zone_531$a_t";
     //--------------------------------
 

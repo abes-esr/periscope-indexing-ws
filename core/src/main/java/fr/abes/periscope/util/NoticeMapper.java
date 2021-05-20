@@ -194,26 +194,41 @@ public class NoticeMapper {
 
                                 // zone 200-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
+                                    if (target.getProperTitleForDisplay() == null) {
+                                        target.setProperTitleForDisplay(subField.getValue());
+                                    }
                                     target.addProperTitle(subField.getValue());
                                 }
 
                                 // zone 200-c
                                 if (subField.getCode().equalsIgnoreCase("c")) {
+                                    if (target.getTitleFromDifferentAuthorForDisplay() == null) {
+                                        target.setTitleFromDifferentAuthorForDisplay(subField.getValue());
+                                    }
                                     target.addTitleFromDifferentAuthor(subField.getValue());
                                 }
 
                                 // zone 200-d
                                 if (subField.getCode().equalsIgnoreCase("d")) {
+                                    if (target.getParallelTitleForDisplay() == null) {
+                                        target.setParallelTitleForDisplay(subField.getValue());
+                                    }
                                     target.addParallelTitle(subField.getValue());
                                 }
 
                                 // zone 200-e
                                 if (subField.getCode().equalsIgnoreCase("e")) {
+                                    if (target.getTitleComplementForDisplay() == null) {
+                                        target.setTitleComplementForDisplay(subField.getValue());
+                                    }
                                     target.addTitleComplement(subField.getValue());
                                 }
 
                                 // zone 200-i
                                 if (subField.getCode().equalsIgnoreCase("i")) {
+                                    if (target.getSectionTitleForDisplay()==null) {
+                                        target.setSectionTitleForDisplay(subField.getValue());
+                                    }
                                     target.addSectionTitle(subField.getValue());
                                 }
                             }
@@ -261,7 +276,9 @@ public class NoticeMapper {
                             Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
-
+                                if (target.getKeyShortedTitleForDisplay() == null) {
+                                    target.setKeyShortedTitleForDisplay(subField.getValue());
+                                }
                                 // zone 531-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.addKeyShortedTitle(subField.getValue());
