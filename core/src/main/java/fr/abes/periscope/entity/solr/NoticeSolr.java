@@ -133,7 +133,7 @@ public class NoticeSolr {
 
     @Field(NoticeSolrField.START_YEAR)
     @Indexed(name = NoticeSolrField.START_YEAR)
-    protected Integer startYear;
+    protected String startYear;
 
     @Field(NoticeSolrField.START_YEAR_CONFIDENCE_INDEX)
     @Indexed(name = NoticeSolrField.START_YEAR_CONFIDENCE_INDEX)
@@ -141,7 +141,7 @@ public class NoticeSolr {
 
     @Field(NoticeSolrField.END_YEAR)
     @Indexed(name = NoticeSolrField.END_YEAR)
-    protected Integer endYear;
+    protected String endYear;
 
     @Field(NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)
     @Indexed(name = NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)

@@ -92,9 +92,9 @@ public class SolrIntegrationTest {
         assertThat(noticesolrOut.getNbLocation()).isEqualTo(5);
         assertThat(noticesolrOut.getLanguage()).isEqualTo("fre");
         assertThat(noticesolrOut.getCountry()).isEqualTo("FR");
-        assertThat(noticesolrOut.getEndYear()).isEqualTo(2014);
-        assertThat(noticesolrOut.getEndYearConfidenceIndex()).isEqualTo(0);
-        assertThat(noticesolrOut.getStartYear()).isEqualTo(2009);
+        assertThat(noticesolrOut.getEndYear()).isEqualTo("201X");
+        assertThat(noticesolrOut.getEndYearConfidenceIndex()).isEqualTo(10);
+        assertThat(noticesolrOut.getStartYear()).isEqualTo("2009");
         assertThat(noticesolrOut.getStartYearConfidenceIndex()).isEqualTo(0);
         assertThat(noticesolrOut.getExternalURLs().size()).isEqualTo(2);
 

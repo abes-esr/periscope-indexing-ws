@@ -72,7 +72,7 @@ public abstract class NoticeSolrField {
     // Zone 100
     public static final String PROCESSING_GLOBAL_DATA = "zone_100$a";
     //--------------------------------
-
+    
     //--------------------------------
     // Zone 101
     public static final String LANGUAGE = "zone_101$a";
