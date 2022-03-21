@@ -20,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -317,7 +315,7 @@ public class NoticeMapper {
                                         itemSolr.setRcr(subField.getValue());
                                     }
                                     if (subField.getCode().equalsIgnoreCase("z")) {
-                                        itemSolr.setPcp(subField.getValue());
+                                        itemSolr.addPcp(subField.getValue());
                                     }
                                 }
                             }
@@ -326,6 +324,13 @@ public class NoticeMapper {
                     }
 
                     target.setNbLocation(target.getRcrList().size());
+                    Set<String> pcps = new HashSet<>();
+                    target.getItemSolrs().stream().forEach(i -> {
+                        if (i.getPcp().size() != 0) {
+                            pcps.addAll(i.getPcp().stream().collect(Collectors.toSet()));
+                        }
+                    });
+                    target.setNbPcp(pcps.stream().distinct().count());
 
                     return target;
 

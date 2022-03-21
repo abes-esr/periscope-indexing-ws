@@ -97,6 +97,7 @@ public class SolrIntegrationTest {
         assertThat(noticesolrOut.getStartYear()).isEqualTo("2009");
         assertThat(noticesolrOut.getStartYearConfidenceIndex()).isEqualTo(0);
         assertThat(noticesolrOut.getExternalURLs().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getNbPcp()).isEqualTo(2);
 
         noticeService.delete(notice);
     }
