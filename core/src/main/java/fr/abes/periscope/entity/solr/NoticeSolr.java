@@ -123,6 +123,10 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.NB_LOC)
     protected Integer nbLocation;
 
+    @Field(NoticeSolrField.NB_PCP)
+    @Indexed(name = NoticeSolrField.NB_PCP)
+    protected Long nbPcp;
+
     @Field(NoticeSolrField.LANGUAGE)
     @Indexed(name = NoticeSolrField.LANGUAGE)
     protected String language;
