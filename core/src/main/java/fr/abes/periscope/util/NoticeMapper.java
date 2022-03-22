@@ -313,9 +313,11 @@ public class NoticeMapper {
                                 if (dataField.getTag().equalsIgnoreCase("930")) {
                                     if (subField.getCode().equalsIgnoreCase("b")) {
                                         itemSolr.setRcr(subField.getValue());
+                                        target.addRcr(subField.getValue());
                                     }
                                     if (subField.getCode().equalsIgnoreCase("z")) {
                                         itemSolr.addPcp(subField.getValue());
+                                        target.addPcp(subField.getValue());
                                     }
                                 }
                             }
@@ -324,13 +326,7 @@ public class NoticeMapper {
                     }
 
                     target.setNbLocation(target.getRcrList().size());
-                    Set<String> pcps = new HashSet<>();
-                    target.getItemSolrs().stream().forEach(i -> {
-                        if (i.getPcp().size() != 0) {
-                            pcps.addAll(i.getPcp().stream().collect(Collectors.toSet()));
-                        }
-                    });
-                    target.setNbPcp(pcps.stream().distinct().count());
+                    target.setNbPcp(target.getPcpList().size());
 
                     return target;
 

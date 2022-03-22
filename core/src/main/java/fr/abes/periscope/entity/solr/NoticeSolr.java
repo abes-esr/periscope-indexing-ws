@@ -125,7 +125,7 @@ public class NoticeSolr {
 
     @Field(NoticeSolrField.NB_PCP)
     @Indexed(name = NoticeSolrField.NB_PCP)
-    protected Long nbPcp;
+    protected Integer nbPcp;
 
     @Field(NoticeSolrField.LANGUAGE)
     @Indexed(name = NoticeSolrField.LANGUAGE)
@@ -151,11 +151,18 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)
     protected Integer endYearConfidenceIndex;
 
+    @Field(NoticeSolrField.RCR_LIST)
+    @Indexed(name = NoticeSolrField.RCR_LIST)
+    protected Set<String> rcrList = new HashSet<>();
+
+    @Field(NoticeSolrField.PCP_LIST)
+    @Indexed(name = NoticeSolrField.PCP_LIST)
+    protected Set<String> pcpList = new HashSet<>();
+
     @ChildDocument
     protected Set<ItemSolr> itemSolrs = new HashSet<>();
 
     protected boolean toDelete;
-    protected Set<String> rcrList = new HashSet<>();
 
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
@@ -193,6 +200,10 @@ public class NoticeSolr {
     public void addSectionTitle(String sectionTitle) {
         this.sectionTitle.add(sectionTitle);
     }
+
+    public void addRcr(String rcr) { this.rcrList.add(rcr);}
+
+    public void addPcp(String pcp) { this.pcpList.add(pcp);}
 
     @Override
     public boolean equals(Object obj) {
