@@ -41,6 +41,9 @@ public class SolrIntegrationTest {
     @Value("classpath:noticeXml/13282261X.xml")
     private Resource xmlFile1;
 
+    @Value(("classpath:noticeXml/999999999.xml"))
+    private Resource xmlFile2;
+
     private NoticeSolr getNoticeFromFile(Resource file) throws IOException {
         String xml = IOUtils.toString(new FileInputStream(file.getFile()), StandardCharsets.UTF_8);
 
@@ -102,5 +105,18 @@ public class SolrIntegrationTest {
         noticeService.delete(notice);
     }
 
+    @Test
+    @DisplayName("test indexation PCP")
+    public void indexPCP() throws IOException {
+        NoticeSolr notice = getNoticeFromFile(xmlFile2);
+        noticeService.save(notice);
+        NoticeSolr noticesolrOut = noticeService.findByPpn("999999999");
+
+        System.out.println(noticesolrOut);
+        assertThat(noticesolrOut.getNbLocation()).isEqualTo(48);
+        assertThat(noticesolrOut.getNbPcp()).isEqualTo(2);
+
+        noticeService.delete(notice);
+    }
 }
 
