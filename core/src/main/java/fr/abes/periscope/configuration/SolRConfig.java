@@ -1,5 +1,6 @@
 package fr.abes.periscope.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.BinaryResponseParser;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -14,6 +15,7 @@ import org.springframework.data.solr.core.SolrTemplate;
  * Configuration du client SolR
  */
 @Configuration
+@Slf4j
 public class SolRConfig {
 
     @Value("${solr.baseurl}")
@@ -25,7 +27,7 @@ public class SolRConfig {
         if (solrBaseUrl.isEmpty()) {
             throw  new SolrException(SolrException.ErrorCode.SERVER_ERROR,"baseURL is empty");
         }
-
+        log.debug("Serveur SOLr : " + solrBaseUrl);
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.add("wt", "javabin");
         params.add("version","2.2");
