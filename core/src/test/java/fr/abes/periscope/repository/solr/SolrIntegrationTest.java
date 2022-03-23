@@ -113,7 +113,7 @@ public class SolrIntegrationTest {
         NoticeSolr noticesolrOut = noticeService.findByPpn("999999999");
 
         System.out.println(noticesolrOut);
-        assertThat(noticesolrOut.getNbLocation()).isEqualTo(48);
+        assertThat(noticesolrOut.getNbLocation()).isEqualTo(47);
         assertThat(noticesolrOut.getNbPcp()).isEqualTo(2);
 
         noticeService.delete(notice);

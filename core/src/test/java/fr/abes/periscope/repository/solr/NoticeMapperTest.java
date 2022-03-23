@@ -36,6 +36,9 @@ public class NoticeMapperTest {
     @Value("classpath:noticeXml/13282261X.xml")
     private Resource xmlFile;
 
+    @Value("classpath:noticeXml/129542059.xml")
+    private Resource xmlFile2;
+
     /**
      * Test titre mort
      */
@@ -91,6 +94,22 @@ public class NoticeMapperTest {
         Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
         String finalValue = value;
         Assertions.assertThrows(IllegalPublicationYearException.class, () -> {noticeMapper.buildEndPublicationYear(finalValue).getYear();});
+
+    }
+
+    @Test
+    void testErreurNbLocs() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFile2.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+
+        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+
+        Assertions.assertEquals(1, noticeSolr.getNbLocation().intValue());
+
 
     }
 }

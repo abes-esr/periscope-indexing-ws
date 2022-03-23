@@ -166,7 +166,6 @@ public class NoticeSolr {
 
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
-        this.rcrList.add(specimen.getRcr());
     }
 
     public void addExternalUrl(String url) {
