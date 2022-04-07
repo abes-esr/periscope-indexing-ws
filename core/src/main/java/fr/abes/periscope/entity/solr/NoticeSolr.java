@@ -107,6 +107,10 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE)
     protected List<String> keyShortedTitle = new ArrayList<>();
 
+    @Field(NoticeSolrField.TRI_TITRE)
+    @Indexed(name = NoticeSolrField.TRI_TITRE)
+    protected String triTitre;
+
     @Field(NoticeSolrField.DOCUMENT_TYPE)
     @Indexed(name = NoticeSolrField.DOCUMENT_TYPE)
     protected String typeDocument;
@@ -203,6 +207,40 @@ public class NoticeSolr {
     public void addRcr(String rcr) { this.rcrList.add(rcr);}
 
     public void addPcp(String pcp) { this.pcpList.add(pcp);}
+
+    public void setTriTitre() {
+        this.triTitre = this.keyTitle;
+        if (this.triTitre != null && !this.triTitre.isEmpty() && this.keyTitleQualifer != null) {
+            this.triTitre += " " + this.keyTitleQualifer.replace("\u0098", "").replace("\u009c", "");
+        }
+        if (triTitre == null || triTitre.isEmpty()) {
+            if (this.keyShortedTitleForDisplay != null && !this.keyShortedTitleForDisplay.isEmpty()) {
+                this.triTitre = this.keyShortedTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+                return;
+            }
+
+            if (this.properTitleForDisplay != null && !this.properTitleForDisplay.isEmpty()) {
+                this.triTitre = this.properTitleForDisplay;
+                return;
+            }
+
+            if (this.titleFromDifferentAuthorForDisplay != null && !this.titleFromDifferentAuthorForDisplay.isEmpty()) {
+                this.triTitre = this.titleFromDifferentAuthorForDisplay;
+            }
+
+            if (this.parallelTitleForDisplay != null && !this.parallelTitleForDisplay.isEmpty()) {
+                this.triTitre = this.parallelTitleForDisplay;
+            }
+
+            if (this.titleComplementForDisplay != null && !this.titleComplementForDisplay.isEmpty()) {
+                this.triTitre = this.titleComplementForDisplay;
+            }
+        }
+        if (this.triTitre != null) {
+            //suppression des caractères entourant les mots vides pour l'affichage
+            this.triTitre = this.triTitre.replace("\u0098", "").replace("\u009c", "");
+        }
+    }
 
     @Override
     public boolean equals(Object obj) {

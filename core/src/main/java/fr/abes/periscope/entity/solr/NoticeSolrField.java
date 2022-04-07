@@ -178,6 +178,7 @@ public abstract class NoticeSolrField {
     public static final String NB_LOC = "NbLocs";
     public static final String PCP_RCR = "pcprcr";
     public static final String NB_PCP = "NbPcps";
+    public static final String TRI_TITRE = "triTitre";
 
     public static final String START_YEAR = "start_year";
     public static final String START_YEAR_CONFIDENCE_INDEX = "start_year_confidence_index";
