@@ -284,6 +284,7 @@ public class NoticeMapper {
                             }
                         }
 
+                        target.setTriTitre();
                         // Zone 9XX
                         if (dataField.getTag().startsWith("9")) {
 
