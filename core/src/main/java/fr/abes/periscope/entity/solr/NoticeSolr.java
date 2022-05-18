@@ -168,6 +168,38 @@ public class NoticeSolr {
 
     protected boolean toDelete;
 
+    public void setProperTitleForDisplay(String properTitleForDisplay) {
+        this.properTitleForDisplay = properTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setTitleFromDifferentAuthorForDisplay(String titleFromDifferentAuthorForDisplay) {
+        this.titleFromDifferentAuthorForDisplay = titleFromDifferentAuthorForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setTitleComplementForDisplay(String titleComplementForDisplay) {
+        this.titleComplementForDisplay = titleComplementForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setSectionTitleForDisplay(String sectionTitleForDisplay) {
+        this.sectionTitleForDisplay = sectionTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyShortedTitleForDisplay(String keyShortedTitleForDisplay) {
+        this.keyShortedTitleForDisplay = keyShortedTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setParallelTitleForDisplay(String parallelTitleForDisplay) {
+        this.parallelTitleForDisplay = parallelTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyTitle(String keyTitle) {
+        this.keyTitle = keyTitle.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyTitleQualifer(String keyTitleQualifer) {
+        this.keyTitleQualifer = keyTitleQualifer.replace("\u0098", "").replace("\u009c", "");
+    }
+
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
     }
@@ -211,11 +243,11 @@ public class NoticeSolr {
     public void setTriTitre() {
         this.triTitre = this.keyTitle;
         if (this.triTitre != null && !this.triTitre.isEmpty() && this.keyTitleQualifer != null) {
-            this.triTitre += " " + this.keyTitleQualifer.replace("\u0098", "").replace("\u009c", "");
+            this.triTitre += " " + this.keyTitleQualifer;
         }
         if (triTitre == null || triTitre.isEmpty()) {
             if (this.keyShortedTitleForDisplay != null && !this.keyShortedTitleForDisplay.isEmpty()) {
-                this.triTitre = this.keyShortedTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+                this.triTitre = this.keyShortedTitleForDisplay;
                 return;
             }
 

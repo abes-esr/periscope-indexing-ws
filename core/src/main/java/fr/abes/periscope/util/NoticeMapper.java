@@ -77,10 +77,10 @@ public class NoticeMapper {
                     // Champ type de support
                     target.setTypeSupport(extractSupportType(source.getLeader().substring(6,7)));
                     // ID
-                    target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     // Champs PPN
-                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     // Champs data fields
                     Iterator<DataField> iterator = source.getDataFields().iterator();
