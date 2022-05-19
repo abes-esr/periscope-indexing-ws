@@ -22,13 +22,13 @@ import java.util.HashMap;
 @BaseXMLConfiguration
 @Slf4j
 public class BaseXmlConfig {
-    @Value("${basexml.datasource.url}")
+    @Value("${periscope.datasource.url}")
     private String url;
-    @Value("${basexml.datasource.username}")
+    @Value("${periscope.datasource.username}")
     private String username;
-    @Value("${basexml.datasource.password}")
+    @Value("${periscope.datasource.password}")
     private String password;
-    @Value("${basexml.datasource.driver-class-name}")
+    @Value("${periscope.datasource.driver-class-name}")
     private String driver;
     @Value("${spring.jpa.show-sql}")
     protected String showsql;

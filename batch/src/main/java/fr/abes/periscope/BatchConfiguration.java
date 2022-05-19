@@ -54,9 +54,6 @@ public class BatchConfiguration {
     @Autowired
     private NoticeStoreService noticeStoreService;
 
-    long startTime;
-    long endTime;
-
     @Autowired
     protected DataSource baseXmlDataSource;
 
@@ -67,7 +64,6 @@ public class BatchConfiguration {
 
     @Bean
     public Job jobIndexerTableNoticesBibio() throws Exception {
-        startTime = System.currentTimeMillis();
         return this.jobs.get("indexerTableNoticesBibio").incrementer(incrementer())
                 .start(managerStep())
                 .build();

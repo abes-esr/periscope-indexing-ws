@@ -29,13 +29,13 @@ public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolr> 
 
     @Override
     public NoticeSolr process(NoticesBibio notice) throws Exception {
-        log.debug("Processing " + threadName + " : notice n°" + notice.getId());
         try {
             JacksonXmlModule module = new JacksonXmlModule();
             module.setDefaultUseWrapper(false);
             XmlMapper xmlMapper = new XmlMapper(module);
             NoticeXml noticeXml = xmlMapper.readValue(notice.getDataXml().getCharacterStream(), NoticeXml.class);
             if (service.isRessourceContinue(noticeXml)) {
+                log.debug("Processing " + threadName + " : notice n°" + notice.getId());
                 return noticeMapper.map(noticeXml, NoticeSolr.class);
             }
         }catch (Exception ex) {
