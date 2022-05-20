@@ -19,6 +19,9 @@ public class NoticesBibio implements Serializable {
     @Column(name = "ID")
     private Integer id;
 
+    @Column(name = "PPN")
+    private String ppn;
+
     @Column(name = "DATA_XML")
     @ColumnTransformer(read = "XMLSERIALIZE (CONTENT data_xml as CLOB)", write = "NULLSAFE_XMLTYPE(?)")
     @Lob

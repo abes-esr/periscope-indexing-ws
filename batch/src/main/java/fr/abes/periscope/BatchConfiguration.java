@@ -1,13 +1,14 @@
 package fr.abes.periscope;
 
 import fr.abes.periscope.partitioner.RangePartitioner;
-import fr.abes.periscope.processor.NoticePagingItemReader;
-import fr.abes.periscope.processor.NoticeProcessor;
+import fr.abes.periscope.processor.*;
 import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticesBibio;
-import fr.abes.periscope.processor.SolrItemWriter;
+import fr.abes.periscope.repository.baseXml.PeriscopeIndexRepository;
 import fr.abes.periscope.service.NoticeStoreService;
 import fr.abes.periscope.service.NoticesBibioService;
+import fr.abes.periscope.tasklets.DeleteIndexNull;
+import fr.abes.periscope.tasklets.SelectNoticesAIndexerTasklet;
 import fr.abes.periscope.util.NoticesBibioMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -16,8 +17,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +33,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 
 @Slf4j
@@ -53,7 +60,8 @@ public class BatchConfiguration {
     private NoticesBibioService noticesBibioService;
     @Autowired
     private NoticeStoreService noticeStoreService;
-
+    @Autowired
+    private PeriscopeIndexRepository dao;
     @Autowired
     protected DataSource baseXmlDataSource;
 
@@ -67,6 +75,15 @@ public class BatchConfiguration {
         return this.jobs.get("indexerTableNoticesBibio").incrementer(incrementer())
                 .start(managerStep())
                 .build();
+    }
+
+    @Bean
+    public Job jobIndexerNouvellesNotices(PeriscopeIndexReader reader, PeriscopeIndexProcessor processor, PeriscopeIndexWriter writer) throws Exception {
+        return this.jobs.get("indexNouvellesNotices").incrementer(incrementer())
+                .start(stepSelectNoticesAIndexer()).on("NOTITLE").end()
+                .from(stepSelectNoticesAIndexer()).on("COMPLETED").to(stepIndexNouvelleNotice(reader, processor, writer))
+                .next(stepSuppressionIndexNull())
+                .build().build();
     }
 
     @Bean
@@ -87,6 +104,30 @@ public class BatchConfiguration {
             log.error("Erreur de configuration du partition handler : " + e.getMessage());
         }
         return handler;
+    }
+
+    @Bean
+    public Step stepSelectNoticesAIndexer() {
+        return stepBuilderFactory.get("selectNoticesAIndexer").allowStartIfComplete(true)
+                .tasklet(new SelectNoticesAIndexerTasklet(dao)).build();
+    }
+
+    @Bean
+    public Step stepIndexNouvelleNotice(PeriscopeIndexReader reader, @Qualifier("periscopeIndexProcessor") ItemProcessor processor, PeriscopeIndexWriter writer) {
+        return stepBuilderFactory.get("stepIndexNouvelleNotice").chunk(chunkSize)
+        .reader(reader)
+        .processor(processor).writer(writer).build();
+    }
+
+    @Bean
+    public Step stepSuppressionIndexNull() {
+        return stepBuilderFactory.get("suppressionIndexNull").allowStartIfComplete(true)
+                .tasklet(new DeleteIndexNull(dao)).build();
+    }
+    @Bean
+    @Qualifier("periscopeIndexProcessor")
+    public ItemProcessor<NoticesBibio, NoticeSolr> itemProcessor() {
+        return new PeriscopeIndexProcessor();
     }
 
     @Bean(name = "slave")

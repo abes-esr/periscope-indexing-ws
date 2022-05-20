@@ -14,4 +14,6 @@ public interface NoticesBibioRepository extends JpaRepository<NoticesBibio, Inte
 
     @Query(value = "select min(id) from autorites.noticesbibio", nativeQuery = true)
     Integer findMinId();
+
+    NoticesBibio findByPpn(String ppn);
 }

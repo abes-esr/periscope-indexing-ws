@@ -24,6 +24,10 @@ public class NoticesBibioService {
         return repository.findById(id).orElse(null);
     }
 
+    public NoticesBibio findByPpn(String ppn) {
+        return repository.findByPpn(ppn);
+    }
+
     @TrackExecutionTime
     public Integer getMaxId() {
         return repository.findMaxId();
