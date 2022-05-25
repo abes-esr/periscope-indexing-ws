@@ -1,4 +1,4 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
-public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> implements InitializingBean {
+public class SolrItemReader<T> extends AbstractPagingItemReader<T> implements InitializingBean {
     private static final String START_AFTER_VALUE = "start.after";
     public static final int VALUE_NOT_SET = -1;
     private DataSource dataSource;
@@ -36,8 +36,8 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
     private Map<String, Object> previousStartAfterValues;
     private int fetchSize = -1;
 
-    public NoticePagingItemReader() {
-        this.setName(ClassUtils.getShortName(NoticePagingItemReader.class));
+    public SolrItemReader() {
+        this.setName(ClassUtils.getShortName(SolrItemReader.class));
     }
 
     public void setDataSource(DataSource dataSource) {
@@ -83,7 +83,7 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
                 this.results.clear();
             }
 
-            PagingRowMapper rowCallback = new PagingRowMapper();
+            SolrRowMapper rowCallback = new SolrRowMapper();
             List query;
             if (this.getPage() == 0) {
                 log.debug("SQL used for reading first page: [" + this.firstPageSql + "]");
@@ -165,20 +165,20 @@ public class NoticePagingItemReader<T> extends AbstractPagingItemReader<T> imple
         return (JdbcTemplate) this.namedParameterJdbcTemplate.getJdbcOperations();
     }
 
-    private class PagingRowMapper implements RowMapper<T> {
-        private PagingRowMapper() {
+    private class SolrRowMapper implements RowMapper<T> {
+        private SolrRowMapper() {
         }
 
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-            NoticePagingItemReader.this.startAfterValues = new LinkedHashMap();
-            Iterator var3 = NoticePagingItemReader.this.queryProvider.getSortKeys().entrySet().iterator();
+            SolrItemReader.this.startAfterValues = new LinkedHashMap();
+            Iterator var3 = SolrItemReader.this.queryProvider.getSortKeys().entrySet().iterator();
 
             while (var3.hasNext()) {
                 Map.Entry<String, Order> sortKey = (Map.Entry) var3.next();
-                NoticePagingItemReader.this.startAfterValues.put(sortKey.getKey(), rs.getObject((String) sortKey.getKey()));
+                SolrItemReader.this.startAfterValues.put(sortKey.getKey(), rs.getObject((String) sortKey.getKey()));
             }
 
-            return NoticePagingItemReader.this.rowMapper.mapRow(rs, rowNum);
+            return SolrItemReader.this.rowMapper.mapRow(rs, rowNum);
         }
     }
 }

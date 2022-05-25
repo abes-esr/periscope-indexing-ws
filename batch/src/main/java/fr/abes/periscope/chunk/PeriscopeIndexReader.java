@@ -1,4 +1,4 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import fr.abes.periscope.dto.PeriscopeIndexDto;
 import fr.abes.periscope.entity.xml.NoticesBibio;
@@ -35,6 +35,10 @@ public class PeriscopeIndexReader implements ItemReader<NoticesBibio>, StepExecu
         return null;
     }
 
+    /**
+     * Méthode de lecture d'une notice dans la base xml
+     * @return notice au format XML
+     */
     @Override
     public NoticesBibio read() {
         PeriscopeIndexDto idx;

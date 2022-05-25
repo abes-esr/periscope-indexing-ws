@@ -1,8 +1,6 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import fr.abes.periscope.entity.solr.NoticeSolr;
-import fr.abes.periscope.entity.xml.PeriscopeIndex;
-import fr.abes.periscope.repository.baseXml.PeriscopeIndexRepository;
 import fr.abes.periscope.service.NoticeStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemStreamWriter;
@@ -10,7 +8,6 @@ import org.springframework.batch.item.support.AbstractItemStreamItemWriter;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.service.NoticeStoreService;
@@ -16,8 +16,12 @@ public class PeriscopeIndexWriter implements ItemWriter<NoticeSolr> {
     @Autowired
     private NoticeStoreService service;
 
+    /**
+     * Méthode d'écriture une fois le traitement réalisé
+     * @param list liste des notices solr à indexer
+     */
     @Override
-    public void write(List<? extends NoticeSolr> list) throws Exception {
+    public void write(List<? extends NoticeSolr> list) {
         log.debug("Ecriture notices ");
         list.forEach(l -> log.debug(l.getPpn() + ", "));
         List<NoticeSolr> listToSave = new ArrayList<>();

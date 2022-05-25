@@ -1,7 +1,7 @@
 package fr.abes.periscope;
 
 import fr.abes.periscope.partitioner.RangePartitioner;
-import fr.abes.periscope.processor.*;
+import fr.abes.periscope.chunk.*;
 import fr.abes.periscope.entity.solr.NoticeSolr;
 import fr.abes.periscope.entity.xml.NoticesBibio;
 import fr.abes.periscope.repository.baseXml.PeriscopeIndexRepository;
@@ -18,9 +18,6 @@ import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +30,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 
 @Slf4j
@@ -149,10 +145,10 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
-    public NoticePagingItemReader<NoticesBibio> slaveReader(@Value("#{stepExecutionContext['minValue']}") Integer minValue,
-                                                            @Value("#{stepExecutionContext['maxValue']}") Integer maxValue) throws Exception {
+    public SolrItemReader<NoticesBibio> slaveReader(@Value("#{stepExecutionContext['minValue']}") Integer minValue,
+                                                    @Value("#{stepExecutionContext['maxValue']}") Integer maxValue) throws Exception {
         log.debug("slaveReader start " + minValue + " " + maxValue);
-        NoticePagingItemReader reader = new NoticePagingItemReader();
+        SolrItemReader reader = new SolrItemReader();
         reader.setDataSource(baseXmlDataSource);
         reader.setFetchSize(chunkSize);
         reader.setQueryProvider(queryProvider());
@@ -168,11 +164,11 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
-    public NoticeProcessor slaveProcessor(@Value("#{stepExecutionContext[name]}") String name) {
+    public SolrItemProcessor slaveProcessor(@Value("#{stepExecutionContext[name]}") String name) {
         log.info("Appel au slaveProcessor");
-        NoticeProcessor noticeProcessor = new NoticeProcessor();
-        noticeProcessor.setThreadName(name);
-        return noticeProcessor;
+        SolrItemProcessor solrItemProcessor = new SolrItemProcessor();
+        solrItemProcessor.setThreadName(name);
+        return solrItemProcessor;
     }
 
     @Bean

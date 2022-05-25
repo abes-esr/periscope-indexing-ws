@@ -1,4 +1,4 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

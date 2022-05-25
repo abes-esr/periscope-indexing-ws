@@ -1,4 +1,4 @@
-package fr.abes.periscope.processor;
+package fr.abes.periscope.chunk;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter @Setter
 @Slf4j
-public class NoticeProcessor implements ItemProcessor<NoticesBibio, NoticeSolr> {
+public class SolrItemProcessor implements ItemProcessor<NoticesBibio, NoticeSolr> {
     private String threadName;
 
     @Autowired
