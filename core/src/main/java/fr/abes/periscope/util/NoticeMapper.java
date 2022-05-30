@@ -320,7 +320,22 @@ public class NoticeMapper {
                                         itemSolr.addPcp(subField.getValue());
                                         target.addPcp(subField.getValue());
                                     }
+                                    if (subField.getCode().equalsIgnoreCase("p")) {
+                                        if (subField.getValue().equalsIgnoreCase("Membre du plan de conservation")) {
+                                            itemSolr.setStatutBibliotheque("PA");
+                                            target.addStatut("PA");
+                                        }
+                                        else {
+                                            itemSolr.setStatutBibliotheque("PC");
+                                            target.addStatut("PC");
+                                        }
+                                    }
+
                                 }
+                            }
+                            if (itemSolr.getPcp().size() != 0 && itemSolr.getStatutBibliotheque() == "") {
+                                itemSolr.setStatutBibliotheque("Orphelin");
+                                target.addStatut("Orphelin");
                             }
                             target.addItem(itemSolr);
                         }
