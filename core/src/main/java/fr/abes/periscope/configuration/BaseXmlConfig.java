@@ -3,6 +3,7 @@ package fr.abes.periscope.configuration;
 
 import fr.abes.periscope.util.BaseXMLConfiguration;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.HashMap;
         basePackages = "fr.abes.periscope.repository.baseXml")
 @NoArgsConstructor
 @BaseXMLConfiguration
+@Slf4j
 public class BaseXmlConfig {
     @Value("${basexml.datasource.url}")
     private String url;
@@ -58,6 +60,7 @@ public class BaseXmlConfig {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
+        log.debug("Base de données : " + url);
         return dataSource;
     }
 

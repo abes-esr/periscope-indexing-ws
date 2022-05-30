@@ -3,9 +3,13 @@ package fr.abes.periscope.entity.solr;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.solr.client.solrj.beans.Field;
+import org.hibernate.annotations.Index;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter
 @SolrDocument
@@ -34,12 +38,20 @@ public class ItemSolr {
 
     @Field(ItemSolrField.PCP)
     @Indexed(name = ItemSolrField.PCP)
-    private String pcp;
+    private List<String> pcp = new ArrayList<>();
+
+    @Field(ItemSolrField.STATUT)
+    @Indexed(ItemSolrField.STATUT)
+    private String statutBibliotheque;
 
     public ItemSolr(String id_parent, String epn) {
         this.id = epn;
         this.epn = epn;
         this.id_parent = id_parent; // Lien avec la notice parent
+    }
+
+    public void addPcp(String pcp) {
+        this.pcp.add(pcp);
     }
 
     @Override

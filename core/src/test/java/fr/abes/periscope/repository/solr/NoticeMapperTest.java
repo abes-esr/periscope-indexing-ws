@@ -8,7 +8,6 @@ import fr.abes.periscope.exception.IllegalPublicationYearException;
 import fr.abes.periscope.util.BaseXMLConfiguration;
 import fr.abes.periscope.util.NoticeMapper;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +35,9 @@ public class NoticeMapperTest {
     @Value("classpath:noticeXml/13282261X.xml")
     private Resource xmlFile;
 
+    @Value("classpath:noticeXml/129542059.xml")
+    private Resource xmlFile2;
+
     /**
      * Test titre mort
      */
@@ -55,42 +57,58 @@ public class NoticeMapperTest {
 
         NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
 
-        Assert.assertEquals(expectedPpn, noticeSolr.getPpn());
-        Assert.assertEquals(expectedIssn, noticeSolr.getIssn());
+        Assertions.assertEquals(expectedPpn, noticeSolr.getPpn());
+        Assertions.assertEquals(expectedIssn, noticeSolr.getIssn());
     }
 
     @Test
     @DisplayName("test construction date de début et date de fin")
     public void buildStartPublicationYearTest() {
         String value = "        f    1975";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1975");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1975");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
         value = "        f19941995";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1994");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(1));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1994");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(1));
         value = "        f17801789";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1780");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(9));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "1780");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(9));
         value = "        b20002010";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "2000");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), "2010");
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "2000");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), "2010");
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
         value = "        b200     ";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), null);
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), null);
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
         value = "        a200 9999";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), null);
-        Assert.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getYear(), null);
+        Assertions.assertEquals(noticeMapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
         value = "        a200 1234";
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
-        Assert.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(noticeMapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
         String finalValue = value;
         Assertions.assertThrows(IllegalPublicationYearException.class, () -> {noticeMapper.buildEndPublicationYear(finalValue).getYear();});
+
+    }
+
+    @Test
+    void testErreurNbLocs() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFile2.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+
+        NoticeSolr noticeSolr = noticeMapper.map(notice, NoticeSolr.class);
+
+        Assertions.assertEquals(1, noticeSolr.getNbLocation().intValue());
+
 
     }
 }

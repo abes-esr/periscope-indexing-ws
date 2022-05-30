@@ -20,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -79,10 +77,10 @@ public class NoticeMapper {
                     // Champ type de support
                     target.setTypeSupport(extractSupportType(source.getLeader().substring(6,7)));
                     // ID
-                    target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setId(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     // Champs PPN
-                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     // Champs data fields
                     Iterator<DataField> iterator = source.getDataFields().iterator();
@@ -286,6 +284,7 @@ public class NoticeMapper {
                             }
                         }
 
+                        target.setTriTitre();
                         // Zone 9XX
                         if (dataField.getTag().startsWith("9")) {
 
@@ -315,17 +314,35 @@ public class NoticeMapper {
                                 if (dataField.getTag().equalsIgnoreCase("930")) {
                                     if (subField.getCode().equalsIgnoreCase("b")) {
                                         itemSolr.setRcr(subField.getValue());
+                                        target.addRcr(subField.getValue());
                                     }
                                     if (subField.getCode().equalsIgnoreCase("z")) {
-                                        itemSolr.setPcp(subField.getValue());
+                                        itemSolr.addPcp(subField.getValue());
+                                        target.addPcp(subField.getValue());
                                     }
+                                    if (subField.getCode().equalsIgnoreCase("p")) {
+                                        if (subField.getValue().equalsIgnoreCase("Membre du plan de conservation")) {
+                                            itemSolr.setStatutBibliotheque("PA");
+                                            target.addStatut("PA");
+                                        }
+                                        else {
+                                            itemSolr.setStatutBibliotheque("PC");
+                                            target.addStatut("PC");
+                                        }
+                                    }
+
                                 }
+                            }
+                            if (itemSolr.getPcp().size() != 0 && itemSolr.getStatutBibliotheque() == "") {
+                                itemSolr.setStatutBibliotheque("Orphelin");
+                                target.addStatut("Orphelin");
                             }
                             target.addItem(itemSolr);
                         }
                     }
 
                     target.setNbLocation(target.getRcrList().size());
+                    target.setNbPcp(target.getPcpList().size());
 
                     return target;
 

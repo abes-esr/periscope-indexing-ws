@@ -22,6 +22,7 @@ import org.springframework.core.io.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableOnIntegrationTest
@@ -40,6 +41,9 @@ public class SolrIntegrationTest {
 
     @Value("classpath:noticeXml/13282261X.xml")
     private Resource xmlFile1;
+
+    @Value(("classpath:noticeXml/999999999.xml"))
+    private Resource xmlFile2;
 
     private NoticeSolr getNoticeFromFile(Resource file) throws IOException {
         String xml = IOUtils.toString(new FileInputStream(file.getFile()), StandardCharsets.UTF_8);
@@ -97,9 +101,23 @@ public class SolrIntegrationTest {
         assertThat(noticesolrOut.getStartYear()).isEqualTo("2009");
         assertThat(noticesolrOut.getStartYearConfidenceIndex()).isEqualTo(0);
         assertThat(noticesolrOut.getExternalURLs().size()).isEqualTo(2);
+        assertThat(noticesolrOut.getNbPcp()).isEqualTo(2);
 
         noticeService.delete(notice);
     }
 
+    @Test
+    @DisplayName("test indexation PCP")
+    public void indexPCP() throws IOException {
+        NoticeSolr notice = getNoticeFromFile(xmlFile2);
+        noticeService.save(notice);
+        NoticeSolr noticesolrOut = noticeService.findByPpn("999999999");
+
+        System.out.println(noticesolrOut);
+        assertThat(noticesolrOut.getNbLocation()).isEqualTo(47);
+        assertThat(noticesolrOut.getNbPcp()).isEqualTo(2);
+
+        noticeService.delete(notice);
+    }
 }
 

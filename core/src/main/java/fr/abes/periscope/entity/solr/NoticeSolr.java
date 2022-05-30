@@ -107,6 +107,10 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.KEY_SHORTED_TITLE)
     protected List<String> keyShortedTitle = new ArrayList<>();
 
+    @Field(NoticeSolrField.TRI_TITRE)
+    @Indexed(name = NoticeSolrField.TRI_TITRE)
+    protected String triTitre;
+
     @Field(NoticeSolrField.DOCUMENT_TYPE)
     @Indexed(name = NoticeSolrField.DOCUMENT_TYPE)
     protected String typeDocument;
@@ -122,6 +126,10 @@ public class NoticeSolr {
     @Field(NoticeSolrField.NB_LOC)
     @Indexed(name = NoticeSolrField.NB_LOC)
     protected Integer nbLocation;
+
+    @Field(NoticeSolrField.NB_PCP)
+    @Indexed(name = NoticeSolrField.NB_PCP)
+    protected Integer nbPcp;
 
     @Field(NoticeSolrField.LANGUAGE)
     @Indexed(name = NoticeSolrField.LANGUAGE)
@@ -147,15 +155,57 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.END_YEAR_CONFIDENCE_INDEX)
     protected Integer endYearConfidenceIndex;
 
+    @Field(NoticeSolrField.RCR_LIST)
+    @Indexed(name = NoticeSolrField.RCR_LIST)
+    protected Set<String> rcrList = new HashSet<>();
+
+    @Field(NoticeSolrField.PCP_LIST)
+    @Indexed(name = NoticeSolrField.PCP_LIST)
+    protected Set<String> pcpList = new HashSet<>();
+
+    @Field(NoticeSolrField.STATUT_LIST)
+    @Indexed(NoticeSolrField.STATUT_LIST)
+    protected Set<String> statutList = new HashSet<>();
+
     @ChildDocument
     protected Set<ItemSolr> itemSolrs = new HashSet<>();
 
     protected boolean toDelete;
-    protected Set<String> rcrList = new HashSet<>();
+
+    public void setProperTitleForDisplay(String properTitleForDisplay) {
+        this.properTitleForDisplay = properTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setTitleFromDifferentAuthorForDisplay(String titleFromDifferentAuthorForDisplay) {
+        this.titleFromDifferentAuthorForDisplay = titleFromDifferentAuthorForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setTitleComplementForDisplay(String titleComplementForDisplay) {
+        this.titleComplementForDisplay = titleComplementForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setSectionTitleForDisplay(String sectionTitleForDisplay) {
+        this.sectionTitleForDisplay = sectionTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyShortedTitleForDisplay(String keyShortedTitleForDisplay) {
+        this.keyShortedTitleForDisplay = keyShortedTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setParallelTitleForDisplay(String parallelTitleForDisplay) {
+        this.parallelTitleForDisplay = parallelTitleForDisplay.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyTitle(String keyTitle) {
+        this.keyTitle = keyTitle.replace("\u0098", "").replace("\u009c", "");
+    }
+
+    public void setKeyTitleQualifer(String keyTitleQualifer) {
+        this.keyTitleQualifer = keyTitleQualifer.replace("\u0098", "").replace("\u009c", "");
+    }
 
     public void addItem(ItemSolr specimen) {
         this.itemSolrs.add(specimen);
-        this.rcrList.add(specimen.getRcr());
     }
 
     public void addExternalUrl(String url) {
@@ -188,6 +238,46 @@ public class NoticeSolr {
 
     public void addSectionTitle(String sectionTitle) {
         this.sectionTitle.add(sectionTitle);
+    }
+
+    public void addRcr(String rcr) { this.rcrList.add(rcr);}
+
+    public void addPcp(String pcp) { this.pcpList.add(pcp);}
+
+    public void addStatut(String statut) {this.statutList.add(statut); }
+
+    public void setTriTitre() {
+        this.triTitre = this.keyTitle;
+        if (this.triTitre != null && !this.triTitre.isEmpty() && this.keyTitleQualifer != null) {
+            this.triTitre += " " + this.keyTitleQualifer;
+        }
+        if (triTitre == null || triTitre.isEmpty()) {
+            if (this.keyShortedTitleForDisplay != null && !this.keyShortedTitleForDisplay.isEmpty()) {
+                this.triTitre = this.keyShortedTitleForDisplay;
+                return;
+            }
+
+            if (this.properTitleForDisplay != null && !this.properTitleForDisplay.isEmpty()) {
+                this.triTitre = this.properTitleForDisplay;
+                return;
+            }
+
+            if (this.titleFromDifferentAuthorForDisplay != null && !this.titleFromDifferentAuthorForDisplay.isEmpty()) {
+                this.triTitre = this.titleFromDifferentAuthorForDisplay;
+            }
+
+            if (this.parallelTitleForDisplay != null && !this.parallelTitleForDisplay.isEmpty()) {
+                this.triTitre = this.parallelTitleForDisplay;
+            }
+
+            if (this.titleComplementForDisplay != null && !this.titleComplementForDisplay.isEmpty()) {
+                this.triTitre = this.titleComplementForDisplay;
+            }
+        }
+        if (this.triTitre != null) {
+            //suppression des caractères entourant les mots vides pour l'affichage
+            this.triTitre = this.triTitre.replace("\u0098", "").replace("\u009c", "");
+        }
     }
 
     @Override

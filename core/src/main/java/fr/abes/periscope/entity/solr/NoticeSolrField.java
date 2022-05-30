@@ -161,10 +161,9 @@ public abstract class NoticeSolrField {
 
     //--------------------------------
     // Zone 930
-    @Deprecated
-    public static final String PCP_LIST = "zone_930$z";
-    @Deprecated
-    public static final String RCR_LIST = "zone_930$b";
+    public static final String PCP_LIST = "pcpList";
+    public static final String RCR_LIST = "rcrList";
+    public static final String STATUT_LIST = "statutList";
     //--------------------------------
 
     //--------------------------------
@@ -179,6 +178,8 @@ public abstract class NoticeSolrField {
     public static final String DATE_INDEX_TYPE = "pdate";
     public static final String NB_LOC = "NbLocs";
     public static final String PCP_RCR = "pcprcr";
+    public static final String NB_PCP = "NbPcps";
+    public static final String TRI_TITRE = "triTitre";
 
     public static final String START_YEAR = "start_year";
     public static final String START_YEAR_CONFIDENCE_INDEX = "start_year_confidence_index";
