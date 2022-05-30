@@ -163,6 +163,10 @@ public class NoticeSolr {
     @Indexed(name = NoticeSolrField.PCP_LIST)
     protected Set<String> pcpList = new HashSet<>();
 
+    @Field(NoticeSolrField.STATUT_LIST)
+    @Indexed(NoticeSolrField.STATUT_LIST)
+    protected Set<String> statutList = new HashSet<>();
+
     @ChildDocument
     protected Set<ItemSolr> itemSolrs = new HashSet<>();
 
@@ -239,6 +243,8 @@ public class NoticeSolr {
     public void addRcr(String rcr) { this.rcrList.add(rcr);}
 
     public void addPcp(String pcp) { this.pcpList.add(pcp);}
+
+    public void addStatut(String statut) {this.statutList.add(statut); }
 
     public void setTriTitre() {
         this.triTitre = this.keyTitle;
