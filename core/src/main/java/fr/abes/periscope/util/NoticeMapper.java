@@ -333,14 +333,13 @@ public class NoticeMapper {
 
                                 }
                             }
-                            if (itemSolr.getPcp().size() != 0 && itemSolr.getStatutBibliotheque() == "") {
-                                itemSolr.setStatutBibliotheque("Orphelin");
-                                target.addStatut("Orphelin");
-                            }
+
                             target.addItem(itemSolr);
                         }
                     }
-
+                    if (target.getPcpList().size() != 0 && target.getStatutList().size() == 0) {
+                        target.addStatut("Orphelin");
+                    }
                     target.setNbLocation(target.getRcrList().size());
                     target.setNbPcp(target.getPcpList().size());
 
